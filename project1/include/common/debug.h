@@ -30,4 +30,9 @@
 **/
 void print_memory(uint8_t *start, uint32_t length);
 
+/**
+  * @brief An alias for `print_memory()`
+**/
+void (*print_array)();
+
 #endif /* __DEBUG_H__ */

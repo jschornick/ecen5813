@@ -9,6 +9,7 @@
  * @date 2017/06/21
 **/
 
+#include "project1.h"
 
 /**
  * @brief A simple main function for calling project deliverables

@@ -23,6 +23,7 @@
 #include "project1.h"
 #include "memory.h"
 #include "conversion.h"
+#include "debug.h"
 
 int8_t test_data1() {
   uint8_t * ptr;
@@ -321,7 +322,7 @@ int8_t test_reverse()
   return ret;
 }
 
-void course1(void)
+void project1(void)
 {
   uint8_t i;
   int8_t failed = 0;
