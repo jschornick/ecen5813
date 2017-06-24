@@ -14,6 +14,9 @@
 #define BASE_10 (10)
 #define BASE_16 (16)
 
+#define CONVERT_SUCCESS (0)
+#define CONVERT_FAIL (1)
+
 #include <stdint.h>
 
 /**
@@ -66,7 +69,7 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base);
  *
  * @param[in,out] data The 32-bit signed integer to convert
  * @param[in]     length  The address at which to store the string representation
- * @return Returns zero on success, non-zero on failure to convert
+ * @return Returns CONVERT_SUCCESS on success, CONVERT_FAIL otherwise
 **/
 int8_t big_to_little32(uint32_t *data, uint32_t length);
 
@@ -81,7 +84,7 @@ int8_t big_to_little32(uint32_t *data, uint32_t length);
  *
  * @param[in,out] data The 32-bit signed integer to convert
  * @param[in]     length  The address at which to store the string representation
- * @return Returns zero on success, non-zero on failure to convert
+ * @return Returns CONVERT_SUCCESS on success, CONVERT_FAIL otherwise
 **/
 int8_t little_to_big32(uint32_t *data, uint32_t length);
 
