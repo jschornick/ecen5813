@@ -23,6 +23,7 @@ ifndef PLATFORM
   PLATFORM=HOST
 endif
 
+
 ### FLAGS ###
 
 # The name of our primary build target, minus extension
@@ -32,15 +33,19 @@ TARGET=project1
 CFLAGS = -Wall -Werror -g -O0 -std=c99
 INCLUDES = -I../include/common
 CPPFLAGS = -DPROJECT1 $(INCLUDES)
+CPPFLAGS += -DVERBOSE
 LDFLAGS = -Wl,-Map=$(TARGET).map
 
 # Platform-specific flags and compliler selection
 ifeq ($(PLATFORM),HOST)
+#  CPPFLAGS += -DNO_STDIO
   CC = gcc
 else ifeq ($(PLATFORM),BBB)
   CC = arm-linux-gnueabihf-gcc
 else ifeq ($(PLATFORM),KL25Z)
   CC = arm-none-eabi-gcc
+  # Disable standard library I/O functions (printf, etc)
+  CPPFLAGS += -DNO_STDIO
   # Use of 'march' is most likely redundant here, as armv6-m will be implied by
   # specifying 'mcpu'
   CFLAGS += -mcpu=cortex-m0plus
@@ -64,7 +69,6 @@ include sources.mk
 
 # TODO: separate build dirs for each platform
 OBJECTS = $(SOURCES:.c=.o) $(ASM_SOURCES:.S=.o)
-# TODO: check if we need to use these as actual dependencies
 DEPENDENCIES = $(OBJECTS:.o=.d)
 
 

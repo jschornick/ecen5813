@@ -16,13 +16,15 @@
 /**
  * @brief Display a region of memory as hexadecimal bytes.
  *
- * Reads the memory region starting at the `start` address and diplays
- * each consecutive byte for a total of `length` bytes. Each byte is displayed
- * as an two-character hexadecimal. Bytes are displayed four per line, with a
- * space between each byte.
+ * Reads the memory region starting at the `start` address and displays
+ * each consecutive byte for a total of `length` bytes. The value of each byte
+ * is displayed as two-digit hexadecimal, separated by spaces. A newline is
+ * included after the last value.
  *
- * This output of this function is only enabled if the `VERBOSE` is defined at
+ * The output from this function only occurs if the `VERBOSE` is defined at
  * compile time. When undefined, this function simply returns.
+ *
+ * NOTE: length is `uint32_t` per the project document, but should be `size_t`
  *
  * @param[in] start  The start address of memory to display
  * @param[in] length The number of bytes of memory to display
