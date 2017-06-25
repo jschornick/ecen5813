@@ -58,6 +58,7 @@ uint8_t *my_memset(uint8_t *src, size_t length, uint8_t value) {
     return src;
   }
 
+  /* Work backwards, setting each byte of the region to the specified value */
   uint8_t *ptr = src + (length - 1);
   do
   {
@@ -82,6 +83,7 @@ uint8_t *my_reverse(uint8_t *src, size_t length) {
   uint8_t tmp;
   uint8_t *front = src;
   uint8_t *back = src + (length-1);
+  /* Work from outside in, swapping values until the pointers meet in the middle */
   while( front < back )
   {
     tmp = *front;

@@ -14,9 +14,12 @@
 #include "conversion.h"
 
 #define MAX_INT32_DIGITS (32) /* Up to 32 numeric digits in binary */
+
+/* Quick conversion between integer 0-16 and ASCII hex */
 #define TO_ASCII(x) ( (x)<10 ? (x)+'0' : (x)+'A'-10 )
 #define FROM_ASCII(x) ( (x)<='9' ? (x)-'0' : (x)-'A'+10 )
 
+/* Byte masks for endianness conversion */
 #define BYTE1 ( (uint32_t) 0x000000FF)
 #define BYTE2 ( (uint32_t) 0x0000FF00)
 #define BYTE3 ( (uint32_t) 0x00FF0000)
@@ -31,6 +34,7 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
 
   uint8_t length = 1; /* Start counting null-termator only */
   uint32_t mag = data; /* cast from signed, only correct when positive */
+  /* Handle negative values, then continue on as if positive */
   if( data < 0 )
   {
     *ptr++ = (uint8_t) '-';
@@ -40,6 +44,8 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
 
   uint8_t digits[MAX_INT32_DIGITS]; /* allocate on stack to avoid malloc/free */
   uint8_t *digit_ptr = digits;
+  /* Record the least significant digit, drop an order of magnitude, and repeat
+     until nothing is left */
   do
   {
     *digit_ptr++ = mag % base;
@@ -47,7 +53,7 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
   } while( mag > 0 );
   length += digit_ptr - digits;
 
-  /* Digit_ptr is now one spot past what will be the leftmost digit.
+  /* digit_ptr is now one spot past what will be the leftmost digit.
      Play the digits back in reverse to create the expected order. */
   while(digit_ptr-- != digits)
   {
@@ -66,6 +72,7 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base)
     return 0;
   }
 
+  /* Record the sign if present and advance to the actual digits */
   int8_t sign = 1;
   if( *ptr == '-' ) {
     sign = -1;
@@ -73,8 +80,10 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base)
     digits--;
   }
 
-  int32_t value = 0;
   /* Our digit count is now #digits + 1 (null) */
+  /* For each digit (from most-significant down), increase the order of
+     magnitude and add the digit's value. */
+  int32_t value = 0;
   do
   {
     value *= base;
@@ -82,6 +91,7 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base)
     ptr++;
   } while( --digits > 1 );
 
+  /* Return mangnitude with the previously recorded sign */
   return sign * value;
 }
 
@@ -94,6 +104,7 @@ int8_t big_to_little32(uint32_t *data, uint32_t length)
     return CONVERT_FAIL;
   }
 
+  /* Build a new word by masking each byte and shifting it to a mirrored position */
   uint32_t tmp;
   while(length > 0)
   {

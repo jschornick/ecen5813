@@ -54,7 +54,7 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base);
  * as an explicit error, as it is also a vaild conversion result for the string "0".
  *
  * @param[in] ptr    The address of the ASCII string representation of the number
- * @param[in] digits The number of digits in the magnitude of the string representation
+ * @param[in] digits The number of characters in the string representation, including null
  * @param[in] base   An integer (2-16) that specifies the numeric base for the conversion
  * @return Integer value of the converted string, or zero for invalid input paramters
 **/

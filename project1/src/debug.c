@@ -12,6 +12,7 @@
 #include <stddef.h>  /* NULL */
 #include <platform.h>  /* putchar */
 
+/* Quick conversion from integer 0-15 to ASCII hex */
 #define NIBBLE_TO_ASCII(x) ( (x)<10 ? (x)+'0' : (x)+'A'-10 )
 
 void print_memory(uint8_t *start, uint32_t length)
@@ -21,6 +22,8 @@ void print_memory(uint8_t *start, uint32_t length)
   if( (start == NULL) || (length <= 0) ) {
     return;
   }
+
+  /* Print each byte as two character ASCII hex, separated by spaces */
   uint8_t *end = start + (length - 1);
   do
   {
