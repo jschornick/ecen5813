@@ -13,7 +13,7 @@
 #include <stdlib.h> /* malloc, free */
 #include "conversion.h"
 
-#define MAX_INT32_DIGITS (31)
+#define MAX_INT32_DIGITS (32) /* Up to 32 numeric digits in binary */
 #define TO_ASCII(x) ( (x)<10 ? (x)+'0' : (x)+'A'-10 )
 #define FROM_ASCII(x) ( (x)<='9' ? (x)-'0' : (x)-'A'+10 )
 
@@ -38,7 +38,7 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
     mag = -data;
   }
 
-  uint8_t *digits = malloc(MAX_INT32_DIGITS);
+  uint8_t digits[MAX_INT32_DIGITS]; /* allocate on stack to avoid malloc/free */
   uint8_t *digit_ptr = digits;
   do
   {
@@ -53,8 +53,6 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
   {
     *ptr++ = TO_ASCII(*digit_ptr);
   }
-  free(digits);
-
   *ptr = (uint8_t) '\0';
 
   return length;
@@ -74,8 +72,8 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base)
     ptr++;
     digits--;
   }
-  int32_t value = 0;
 
+  int32_t value = 0;
   /* Our digit count is now #digits + 1 (null) */
   do
   {
