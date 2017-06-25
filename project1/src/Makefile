@@ -29,6 +29,7 @@ endif
 # The name of our primary build target, minus extension
 TARGET = project1
 INCDIR = ../include
+LIBNAME = lib$(TARGET).a
 
 # Compiler, preprocessor, and linker flags common to all platforms
 CFLAGS = -std=c99
@@ -75,6 +76,7 @@ endif
 CC = $(TOOLCHAIN)gcc
 LD = $(TOOLCHAIN)ld
 SIZE = $(TOOLCHAIN)size
+AR = $(TOOLCHAIN)ar
 
 
 ### FILES ###
@@ -94,10 +96,13 @@ build: $(TARGET).elf $(DEPENDENCIES)
 	@echo "\nBuild report:"
 	@$(SIZE) $<
 
+.PHONY: build-lib
+build-lib: $(TARGET)_lib.elf
+
+# Preprocess only
 .PHONY: compile-all
 compile-all: $(OBJECTS)
 
-# Preprocess only
 %.i: %.c
 	$(CC) $(CPPFLAGS) -E $< -o $@
 
@@ -117,11 +122,19 @@ compile-all: $(OBJECTS)
 %.o: %.S
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# Link/locate the project executable
+# Build library from object files
+$(LIBNAME): $(OBJECTS)
+	$(AR) rv $(LIBNAME) $(OBJECTS)
+
+# Link/locate the project executable directly with object files
 $(TARGET).elf: $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
+# Link/locate the project executable from library
+$(TARGET)_lib.elf: $(LIBNAME)
+	$(CC) $(LDFLAGS) $(LIBNAME) -o $@
+
 .PHONY: clean
 clean:
-	rm -f *.o *.i *.elf *.map *.d *.asm
+	rm -f *.o *.i *.elf *.map *.d *.asm *.a
 
