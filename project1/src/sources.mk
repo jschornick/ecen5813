@@ -16,8 +16,8 @@ ifeq ($(PLATFORM),HOST)
 else ifeq ($(PLATFORM),BBB)
   # no additional sources
 else ifeq ($(PLATFORM),KL25Z)
-  SOURCES += system_MKL25Z4.c
-  ASM_SOURCES += startup_MKL25Z4.S
+  PLATFORM_SRCS += system_MKL25Z4.c
+  ASM_SRCS += startup_MKL25Z4.S
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)
 endif
