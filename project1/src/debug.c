@@ -16,11 +16,11 @@
 
 void print_memory(uint8_t *start, uint32_t length)
 {
+#ifdef VERBOSE
   /* Silently return when passed invaild parameters */
   if( (start == NULL) || (length <= 0) ) {
     return;
   }
-#ifdef VERBOSE
   uint8_t *end = start + (length - 1);
   do
   {
