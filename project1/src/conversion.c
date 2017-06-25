@@ -88,8 +88,6 @@ int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base)
 }
 
 
-#include<stdio.h>
-
 int8_t big_to_little32(uint32_t *data, uint32_t length)
 {
   /* Fail if passed bad parameters */
