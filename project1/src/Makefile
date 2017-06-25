@@ -161,5 +161,6 @@ $(TARGET)_ld.elf: $(OBJECTS)
 
 .PHONY: clean
 clean:
-	rm -f *.o *.i *.elf *.map *.d *.asm *.a
+	rm -f *.o *.i *.elf *.map *.d *.asm *.a test_*
 
+include testing.mk
