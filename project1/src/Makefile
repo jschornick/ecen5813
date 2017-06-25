@@ -27,23 +27,29 @@ endif
 ### FLAGS ###
 
 # The name of our primary build target, minus extension
-TARGET=project1
+TARGET = project1
+INCDIR = ../include
 
 # Compiler, preprocessor, and linker flags common to all platforms
-CFLAGS = -Wall -Werror -g -O0 -std=c99
-INCLUDES = -I../include/common
-CPPFLAGS = -DPROJECT1 $(INCLUDES)
+CFLAGS = -std=c99
+CFLAGS += -Wall -Werror
+CFLAGS += -g -O0
+
+CPPFLAGS = -DPROJECT1
+CPPFLAGS += $(INCFLAGS)
 CPPFLAGS += -DVERBOSE
+INCFLAGS = -I$(INCDIR)/common
+
 LDFLAGS = -Wl,-Map=$(TARGET).map
 
-# Platform-specific flags and compliler selection
+# Platform-specific flags
 ifeq ($(PLATFORM),HOST)
-#  CPPFLAGS += -DNO_STDIO
-  CC = gcc
+  TOOLCHAIN =
+  #CPPFLAGS += -DNO_STDIO
 else ifeq ($(PLATFORM),BBB)
-  CC = arm-linux-gnueabihf-gcc
+  TOOLCHAIN = arm-linux-gnueabihf-
 else ifeq ($(PLATFORM),KL25Z)
-  CC = arm-none-eabi-gcc
+  TOOLCHAIN = arm-none-eabi-
   # Disable standard library I/O functions (printf, etc)
   CPPFLAGS += -DNO_STDIO
   # Use of 'march' is most likely redundant here, as armv6-m will be implied by
@@ -55,12 +61,20 @@ else ifeq ($(PLATFORM),KL25Z)
   # Note: The FPU-realted CFLAGS from he project document were removed as they
   #       only apply to the Cortex-M4
   #       See: /usr/share/doc/gcc-arm-none-eabi/readme.txt.gz
-  INCLUDES += -I../include/CMSIS -I../include/kl25z
+  INCFLAGS += -I$(INCDIR)/CMSIS
+  INCFLAGS += -I$(INCDIR)/kl25z
   LDFLAGS += -T../platform/MKL25Z128xxx4_flash.ld
   LDFLAGS += -specs=nosys.specs
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)
 endif
+
+
+### TOOLCHAIN / BINUTILS ###
+
+CC = $(TOOLCHAIN)gcc
+LD = $(TOOLCHAIN)ld
+SIZE = $(TOOLCHAIN)size
 
 
 ### FILES ###
@@ -77,6 +91,8 @@ DEPENDENCIES = $(OBJECTS:.o=.d)
 # default rule
 .PHONY: build
 build: $(TARGET).elf $(DEPENDENCIES)
+	@echo "\nBuild report:"
+	@$(SIZE) $<
 
 .PHONY: compile-all
 compile-all: $(OBJECTS)
