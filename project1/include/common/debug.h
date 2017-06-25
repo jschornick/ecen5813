@@ -2,7 +2,7 @@
  * @file debug.h
  * @brief Debugging helper function declarations
  *
- * Declarations for functions that aid in debugging.
+ * Functions that aid in debugging.
  *
  * @author Jeff Schornick
  * @date 2017/06/21

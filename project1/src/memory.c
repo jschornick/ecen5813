@@ -2,7 +2,7 @@
  * @file memory.c
  * @brief Memory function definitions
  *
- * Memory function definitions
+ * Functions which perform basic memory manipulation.
  *
  * @author Jeff Schornick
  * @date 2017/06/21

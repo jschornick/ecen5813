@@ -1,8 +1,8 @@
 /**
  * @file conversion.h
- * @brief Basic data manipulation function declarations
+ * @brief Data manipulation function declarations
  *
- * Data manipulation function declarations
+ * Functions which perform basic data manipulation.
  *
  * @author Jeff Schornick
  * @date 2017/06/21
@@ -11,6 +11,8 @@
 #ifndef __CONVERSION_H__
 #define __CONVERSION_H__
 
+#define BASE_2 (2)
+#define BASE_8 (8)
 #define BASE_10 (10)
 #define BASE_16 (16)
 

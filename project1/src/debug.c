@@ -1,8 +1,8 @@
 /**
  * @file debug.c
- * @brief Debug function definitions
+ * @brief Debugging helper function definitions
  *
- * Debug function definitions
+ * Functions that aid in debugging.
  *
  * @author Jeff Schornick
  * @date 2017/06/21

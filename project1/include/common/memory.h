@@ -2,7 +2,7 @@
  * @file memory.h
  * @brief Memory function declarations
  *
- * Memory function declarations.
+ * Functions which perform basic memory manipulation.
  *
  * @author Jeff Schornick
  * @date 2017/06/21

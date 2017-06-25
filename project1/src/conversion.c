@@ -1,8 +1,8 @@
 /**
  * @file conversion.c
- * @brief Conversion function definitions
+ * @brief Data manipulation function definitions
  *
- * Conversion function definitions
+ * Functions which perform basic data manipulation.
  *
  * @author Jeff Schornick
  * @date 2017/06/21
@@ -18,9 +18,9 @@
 #define FROM_ASCII(x) ( (x)<='9' ? (x)-'0' : (x)-'A'+10 )
 
 #define BYTE1 ( (uint32_t) 0x000000FF)
-#define BYTE2 (0x0000FF00)
-#define BYTE3 (0x00FF0000)
-#define BYTE4 (0xFF000000)
+#define BYTE2 ( (uint32_t) 0x0000FF00)
+#define BYTE3 ( (uint32_t) 0x00FF0000)
+#define BYTE4 ( (uint32_t) 0xFF000000)
 
 uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
 {

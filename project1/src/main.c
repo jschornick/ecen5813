@@ -18,7 +18,7 @@
  * more project deliverables. Deliverables can be selected by definining the
  * appropriate compile-time switch.
  *
- * @return Returns zero on success, non-zero otherwise
+ * @return Always returns zero
 **/
 int main(void)
 {
