@@ -12,6 +12,7 @@ This repository includes the code required for Project 1 of ECEN5813.
    - [`kl25z`](include/kl25z) : KL25z platform-specific header files
    - [`CMSIS`](include/CMSIS) : ARM architecture-specific header files
  - [`platform`](platform) : Non-source files necessary for building (e.g., linker scripts)
+ - [`test`](test) : Additional verification tests
 
 ---
 
@@ -51,3 +52,4 @@ A variety of additional build targets are available. All targets will honor the 
  - `<file>.d   `   : Create the dependency file for a source file
  - `<file>.asm `   : Compile a single C source file into assembly
  - `libproject1.a` : Create library of platform independent functions
+ - `runtests`      : Build and run additional tests
