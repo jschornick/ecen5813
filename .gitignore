@@ -1,0 +1,7 @@
+BUILDOUT
+*.elf
+
+# Kinetis Design Studio
+.cproject
+.project
+.settings
