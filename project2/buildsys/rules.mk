@@ -38,6 +38,20 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.S | $(BUILD_DIR)
 $(EXE): $(OBJECTS) | $(BUILD_DIR)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
+.PHONY: flash
+# Only support flashing on the KL25Z
+ifeq ($(PLATFORM), KL25Z)
+flash: $(EXE)
+	@echo Callng OpenOCD...
+	@echo -------------------
+	@$(OCD) -f $(FLASH_SCRIPT)
+	@echo -------------------
+	@echo Flash complete
+else
+flash:
+	@echo Flashing not supported on PLATFORM=$(PLATFORM)
+endif
+
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
