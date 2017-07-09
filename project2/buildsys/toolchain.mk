@@ -10,7 +10,7 @@ CFLAGS += -g -O0
 CPPFLAGS += $(INCFLAGS)
 INCFLAGS = -I$(INC_DIR)/common
 
-CFLAGS += $(PROJFLAGS)
+CPPFLAGS += $(PROJFLAGS)
 
 LDFLAGS = -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
 #LDFLAGS = -v  # verbose output during linking
@@ -25,16 +25,20 @@ else ifeq ($(PLATFORM),KL25Z)
   TOOLCHAIN = arm-none-eabi-
   # Disable standard library I/O functions (printf, etc)
   CPPFLAGS += -DNO_STDIO
-  # Use of 'march' is most likely redundant here, as armv6-m will be implied by
-  # specifying 'mcpu'
+  # Use of 'march' _should_ be redundant here, as armv6-m will be implied by
+  # specifying 'mcpu', but the resulting binaries are not the same
   CFLAGS += -mcpu=cortex-m0plus
   CFLAGS += -march=armv6-m
-  # Generate code that executes in Thumb state
+  # Generate code for Thumb mode, required for Cortex-M
   CFLAGS += -mthumb
   INCFLAGS += -I$(INC_DIR)/CMSIS
   INCFLAGS += -I$(INC_DIR)/kl25z
   LDFLAGS += -T$(PLAT_DIR)/MKL25Z128xxx4_flash.ld
   LDFLAGS += -specs=nosys.specs
+  # Both -march and -mthumb are required during linking via GCC, since it uses this information
+  # to choose the appropriate C runtime variant (armv6-m).
+  LDFLAGS += -march=armv6-m
+  LDFLAGS += -mthumb
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)
 endif

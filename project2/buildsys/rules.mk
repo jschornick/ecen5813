@@ -15,7 +15,7 @@ compile-all: $(OBJECTS)
 %.o: $(BUILD_DIR)/%.o ;
 %.i: $(BUILD_DIR)/%.i ;
 %.asm: $(BUILD_DIR)/%.asm ;
-# Don't delete "intermediate"
+# Don't delete prerequisites that should be kept
 .PRECIOUS: $(BUILD_DIR)/%.i $(BUILD_DIR)/%.asm
 
 # Preprocess only

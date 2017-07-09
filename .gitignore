@@ -1,5 +1,6 @@
 BUILDOUT
 *.elf
+*.bin
 
 # Kinetis Design Studio
 .cproject
