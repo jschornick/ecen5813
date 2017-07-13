@@ -19,7 +19,7 @@ else ifeq ($(PLATFORM),BBB)
   # no additional sources
 else ifeq ($(PLATFORM),KL25Z)
   PLATFORM_SRCS += system_MKL25Z4.c
-  PLATFORM_SRCS += uart.c
+  PLATFORM_SRCS += led.c uart.c
   ASM_SRCS += startup_MKL25Z4.S
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)
