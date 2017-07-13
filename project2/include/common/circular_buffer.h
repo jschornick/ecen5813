@@ -18,25 +18,27 @@
 #include <stdint.h>
 #include <stddef.h>
 
+typedef uint8_t cb_item_t;
+
 typedef struct
 {
-  volatile uint8_t *buffer;
-  volatile uint8_t *head;
-  volatile uint8_t *tail;
+  volatile cb_item_t *buffer;
+  volatile cb_item_t *head;
+  volatile cb_item_t *tail;
   size_t size;
   volatile size_t count;
 } CircBuf_t;
 
 typedef enum
-  {
-    CB_FALSE = 0, /* Buffer test was not true */
-    CB_OK,        /* Operation on buffer successful */
-    CB_ALLOC_ERR, /* Unable to allocate memory for new buffer */
-    CB_NULL,      /* Attempt to operate on null-pointer */
-    CB_FULL,      /* Buffer is full */
-    CB_EMPTY,     /* Buffer is empty */
-    CB_INDEX_ERR  /* Tried to operate on an invalid index */
-  } CB_status_t;
+{
+  CB_FALSE = 0, /* Buffer test was not true */
+  CB_OK,        /* Operation on buffer successful */
+  CB_ALLOC_ERR, /* Unable to allocate memory for new buffer */
+  CB_NULL,      /* Attempt to operate on null-pointer */
+  CB_SIZE_ERR,  /* Bad index or size parameter */
+  CB_FULL,      /* Buffer is full */
+  CB_EMPTY      /* Buffer is empty */
+} CB_status_t;
 
 
 /**
@@ -65,7 +67,7 @@ CB_status_t CB_init(CircBuf_t *circbuf, size_t size);
  * @param[in,out] circbuf A pointer to an existing circular buffer
  * @return Returns CB_OK if successful, otherwise an error status
  **/
-CB_status_t CB_destory(CircBuf_t *circbuf);
+CB_status_t CB_destroy(CircBuf_t *circbuf);
 
 /**
  * @brief Add an item to a circular buffer
@@ -80,7 +82,7 @@ CB_status_t CB_destory(CircBuf_t *circbuf);
  * @param[in]     data    The item to add to the buffer
  * @return Returns CB_OK if item is successfully added, otherwise and error status
  **/
-CB_status_t CB_add_item(CircBuf_t *circbuf, uint8_t item);
+CB_status_t CB_add_item(CircBuf_t *circbuf, cb_item_t item);
 
 /**
  * @brief Remove an item to a circular buffer
@@ -95,7 +97,7 @@ CB_status_t CB_add_item(CircBuf_t *circbuf, uint8_t item);
  * @param[in]     data    The address where the removed item should be stored
  * @return Returns CB_OK if item is successfully added, otherwise and error status
  **/
-CB_status_t CB_remove_item(CircBuf_t *circbuf, uint8_t *item);
+CB_status_t CB_remove_item(CircBuf_t *circbuf, cb_item_t *item);
 
 /**
  * @brief Check if the circular buffer is full
@@ -128,7 +130,7 @@ CB_status_t CB_is_empty(CircBuf_t *circbuf);
  * Reads the Nth newest item (N items back from the head) in the circular buffer
  * pointed to by `circbuf` and returns CB_OK on success.
  *
- * If N-1 is greater than the number of items stored in the buffer, CB_INDEX_ERR
+ * If N-1 is greater than the number of items stored in the buffer, CB_SIZE_ERR
  * will be returned.
  *
  * TODO: Should this return the value read?
