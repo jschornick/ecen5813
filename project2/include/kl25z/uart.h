@@ -14,10 +14,16 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <circular_buffer.h>
 
 /* The baud rate to be used when configuring the UART */
-/* TODO: This should be dependent on the clock rate. */
+/* TODO: Also need to calculate OSR/SBR configuration values */
 #define UART_BAUD_RATE 115200
+
+#define UART_BUF_SIZE 100  /* bytes */
+
+extern CircBuf_t rxbuf;
+extern CircBuf_t txbuf;
 
 typedef enum
 {
@@ -32,7 +38,7 @@ typedef enum
  * Configuration will result in 8-bit LSB data, 1 start/stop bit, no parity.
  * The baud rate used is defined in the macro UART_BAUD_RATE.
  *
- * @return Returns UARK_OK if configuration succeeds
+ * @return Returns UART_OK if configuration succeeds
  **/
 UART_status_t UART_configure();
 
@@ -43,7 +49,7 @@ UART_status_t UART_configure();
  * device is ready to transmit.
  *
  * @param[in] data A pointer to the data byte to be sent
- * @return Returns UARK_OK if send succeeds
+ * @return Returns UART_OK if send succeeds
  **/
 UART_status_t UART_send(uint8_t *data);
 
@@ -56,7 +62,7 @@ UART_status_t UART_send(uint8_t *data);
  *
  * @param[in] data      A pointer to the data to be sent
  * @param[in] num_bytes The number of bytes to send
- * @return Returns UARK_OK after all provided data has been sent
+ * @return Returns UART_OK after all provided data has been sent
  **/
 UART_status_t UART_send_n(uint8_t *data, size_t num_bytes);
 
@@ -68,7 +74,7 @@ UART_status_t UART_send_n(uint8_t *data, size_t num_bytes);
  * ready to send.
  *
  * @param[out] data A pointer to the data byte to be sent
- * @return Returns UARK_OK if send succeeds
+ * @return Returns UART_OK if send succeeds
  **/
 UART_status_t UART_receive(uint8_t *data);
 
@@ -81,7 +87,7 @@ UART_status_t UART_receive(uint8_t *data);
  *
  * @param[out] data      The address where the received bytes should be stored
  * @param[in]  num_bytes The number of bytes to receive
- * @return Returns UARK_OK after all expected bytes have been received
+ * @return Returns UART_OK after all expected bytes have been received
  **/
 UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes);
 

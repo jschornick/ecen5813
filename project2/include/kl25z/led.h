@@ -10,6 +10,7 @@
 #define __LED_H__
 
 #include <MKL25Z4.h>
+#include <stdint.h>
 
 /* Red LED connected to PB18. Active low. */
 #define RED_LED_PORT PORTB
