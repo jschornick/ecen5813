@@ -7,6 +7,7 @@
 
 # Common source files, all platforms
 COMMON_SRCS = \
+  circular_buffer.c \
   conversion.c \
   main.c \
   memory.c \
