@@ -15,10 +15,10 @@
 
 uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length)
 {
-  /* NULL arguments are invalid, but per the specification we always return dst */
+  /* NULL arguments are invalid, return 0 address to indicate failure */
   if ((src == NULL) || (dst == NULL) || (length <= 0))
   {
-    return dst;
+    return MEM_FAIL;
   }
 
   uint8_t *dst_ptr = NULL;  /* position within destination memory region */
@@ -52,10 +52,10 @@ uint8_t *my_memcpy(uint8_t *src, uint8_t *dst, size_t length) {
 }
 
 uint8_t *my_memset(uint8_t *src, size_t length, uint8_t value) {
-  /* NULL src is invalid, but per the specification we always return src */
+  /* NULL src is invalid */
   if ((src == NULL) || (length <= 0))
   {
-    return src;
+    return NULL;
   }
 
   /* Work backwards, setting each byte of the region to the specified value */
@@ -74,7 +74,7 @@ uint8_t *my_memzero(uint8_t *src, size_t length) {
 }
 
 uint8_t *my_reverse(uint8_t *src, size_t length) {
-  /* NULL src is invalid, but per the specification we always return src */
+  /* NULL src is invalid */
   if ((src == NULL) || (length <= 0))
   {
     return src;

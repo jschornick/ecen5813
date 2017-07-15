@@ -69,7 +69,7 @@ CB_status_t CB_add_item(CircBuf_t *circbuf, uint8_t item)
 
 CB_status_t CB_remove_item(CircBuf_t *circbuf, uint8_t *item)
 {
-  if( circbuf == NULL )
+  if( circbuf == NULL || item == NULL)
   {
     return CB_NULL;
   }
@@ -113,17 +113,25 @@ CB_status_t CB_is_empty(CircBuf_t *circbuf)
   return CB_EMPTY;
 }
 
-CB_status_t CB_peek(CircBuf_t *circbuf, size_t position)
+CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item)
 {
-  if( circbuf == NULL )
+  if( circbuf == NULL || item == NULL)
   {
     return CB_NULL;
   }
-  if( position > circbuf->count - 1 )
+  if( position+1 > circbuf->count )
   {
     return CB_SIZE_ERR;
   }
-  // TODO: return peeked value?
+  /* Find the peeked item, but wrap around if necessary */
+  if( circbuf->head - position >= circbuf->buffer )
+  {
+    *item = *(circbuf->head - position);
+  }
+  else
+  {
+    *item = *((circbuf->head - position) + circbuf->size);
+  }
   return CB_OK;
 }
 

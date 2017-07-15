@@ -22,11 +22,11 @@ typedef uint8_t cb_item_t;
 
 typedef struct
 {
-  volatile cb_item_t *buffer;
-  volatile cb_item_t *head;
-  volatile cb_item_t *tail;
-  size_t size;
-  volatile size_t count;
+  volatile cb_item_t *buffer; /* The address of the data buffer allocation */
+  volatile cb_item_t *head;   /* Points to the latest item added */
+  volatile cb_item_t *tail;   /* Points one spot behind the earliest item added */
+  size_t size;                /* Total number of items the buffer can store */
+  volatile size_t count;      /* Current number of items being stored */
 } CircBuf_t;
 
 typedef enum
@@ -128,18 +128,18 @@ CB_status_t CB_is_empty(CircBuf_t *circbuf);
  * @brief Read on the Nth newest item in the circular buffer
  *
  * Reads the Nth newest item (N items back from the head) in the circular buffer
- * pointed to by `circbuf` and returns CB_OK on success.
+ * pointed to by `circbuf` and stores the value at the address specified by
+ * `item`.
  *
- * If N-1 is greater than the number of items stored in the buffer, CB_SIZE_ERR
- * will be returned.
- *
- * TODO: Should this return the value read?
+ * If position+1 is greater than the number of items stored in the buffer,
+ * CB_SIZE_ERR will be returned.
  *
  * @param[in] circbuf  A pointer to the initialized circular buffer to be read
  * @param[in] position The position back from the head to peek into
- * @return Returns CB_EMPTY if buffer is empty, CB_FALSE or error otherwise
+ * @param[out] item    The address to store the value of the peeked at item
+ * @return Returns C
  **/
-CB_status_t CB_peek(CircBuf_t *circbuf, size_t position);
+CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item);
 
 
 #endif /* __CIRCULAR_BUFFER_H__ */

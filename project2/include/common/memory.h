@@ -14,6 +14,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define MEM_FAIL 0
+
 /**
  * @brief Move a range of bytes from source to destination
  *
@@ -23,7 +25,7 @@
  * @param[in]  src    The source address of the memory region to move
  * @param[out] dst    The destination address for the moved region of memory
  * @param[in]  length The number of bytes in the memory region to move
- * @return Returns a pointer to the destination
+ * @return Returns a pointer to the destination, or 0 on failure
 **/
 uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length);
 
@@ -38,7 +40,7 @@ uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length);
  * @param[in]  src    The source address of the memory region to move
  * @param[out] dst    The destination address for the moved region of memory
  * @param[in]  length The number of bytes in the memory region to move
- * @return Returns a pointer to the destination
+ * @return Returns a pointer to the destination, or 0 on failure
 **/
 uint8_t *my_memcpy(uint8_t *src, uint8_t *dst, size_t length);
 
