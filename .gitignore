@@ -1,6 +1,7 @@
 BUILDOUT
 *.elf
 *.bin
+*/tests/*.run
 
 # Kinetis Design Studio
 .cproject

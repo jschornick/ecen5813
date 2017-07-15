@@ -29,12 +29,14 @@ endif
 SOURCES=$(COMMON_SRCS) $(PLATFORM_SRCS) $(ASM_SRCS)
 
 # A list of all platform independent object files
-PI_OBJS = $(COMMON_SRCS:.c=.o)
+PI_OBJS = $(addprefix $(BUILD_DIR)/, $(COMMON_SRCS:.c=.o))
 # A list of all platform dependent object files
-PD_OBJS = $(PLATFORM_SRCS:.c=.o) $(ASM_SRCS:.S=.o)
+PD_OBJS = $(addprefix $(BUILD_DIR)/, $(PLATFORM_SRCS:.c=.o) $(ASM_SRCS:.S=.o))
 # A list of all object files needed to build target
 # (excluding system library dependencies)
 OBJECTS = $(PI_OBJS) $(PD_OBJS)
-
-OBJECTS := $(addprefix $(BUILD_DIR)/, $(PI_OBJS) $(PD_OBJS))
 SOURCES := $(addprefix $(SRC_DIR)/, $(SOURCES))
+
+# The list of objects which should be included in the library
+LIB_OBJS = $(filter-out $(BUILD_DIR)/main.o, $(PI_OBJS))
+LIBNAME = $(BUILD_DIR)/lib$(TARGET).a

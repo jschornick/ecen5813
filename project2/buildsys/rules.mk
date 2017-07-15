@@ -38,6 +38,14 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.S | $(BUILD_DIR)
 $(EXE): $(OBJECTS) | $(BUILD_DIR)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
+$(LIBNAME): $(LIB_OBJS)
+	$(AR) rv $(LIBNAME) $(LIB_OBJS)
+
+.PHONY: unittests
+unittests: $(LIBNAME)
+	@echo Building and running all unit tests...
+	cd tests && make runall
+
 .PHONY: flash
 # Only support flashing on the KL25Z
 ifeq ($(PLATFORM), KL25Z)
@@ -58,9 +66,9 @@ $(BUILD_DIR):
 # clean selected platforms
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR) $(EXE)
+	rm -rf $(BUILD_DIR) $(EXE) tests/test_*.run
 
 # clean all all platforms
 .PHONY: clean-all
 clean-all:
-	rm -rf $(BUILD_BASE) $(dir $(EXE))*.elf
+	rm -rf $(BUILD_BASE) $(dir $(EXE))*.elf tests/test_*.run
