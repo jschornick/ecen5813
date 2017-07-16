@@ -21,54 +21,47 @@ CircBuf_t txbuf;
 
 UART_status_t UART_configure()
 {
-  // Enable Port A clock
+  // Enable Port A clock for UART0 RX/TX pins
   SIM->SCGC5 |= SIM_SCGC5_PORTA(1); // 1 = enabled
 
+  // Select UART0 mux mode for PA1 and PA2
   PORTA->PCR[1] &= ~(PORT_PCR_MUX_MASK);
   PORTA->PCR[1] |= PORT_PCR_MUX(2); // ALT2 mode (UART0_RX)
 
   PORTA->PCR[2] &= ~(PORT_PCR_MUX_MASK);
   PORTA->PCR[2] |= PORT_PCR_MUX(2); // ALT2 mode (UART0_TX)
 
-  // UART0 clock source select (RM:p196)
+  // UART0 clock source select (Ref Manual:p196)
   SIM->SOPT2 |= SIM_SOPT2_UART0SRC(1);  // 1 = MCGFLLCLK or MCGPLLCLK/2
-  SIM->SOPT2 |= SIM_SOPT2_PLLFLLSEL(1); // 1 = MCGPLLCLK/2 clock (48/2 = 24MHz)
+  // SIM->OPT2_PLLFLLSEL is set to the correct value in SystemInit()
+  //   It determines if the UART0 clock is a PLL/2 or FLL clock source
 
   // UART0 clock enable
-  SIM->SCGC4 |= SIM_SCGC4_UART0(1);  // 1 = enabled
+  SIM->SCGC4 |= SIM_SCGC4_UART0(1); // 1 = enabled
 
   // Disable RX/TX during UART configuration
   UART0->C2 &= ~(UART0_C2_RE_MASK); // RX disable
   UART0->C2 &= ~(UART0_C2_TE_MASK); // TX disable
 
-  // Baud rate (Ch 39.3.1)
-  // 13-bit baud rate modulo divicor
-  // baud rate = (baud clock / ( (OSR+1) * BR))
-
-  // DEFAULT_SYSTEM_CLOCK == 48MHz
-  // MCGOUTCLK freq == 48MHz
-  // PLL input is 2MH, output is 48MHz, PLL/2 is 24MHz
-
-  // SBR: 5 high bits
-  // SBL: 8 low bits
+  // Baud rate clock (Ch 39.3.1)
+  //   baud clock rate = ( (UART0 clock) / ((OSR+1)*BR) )
+  // SBR is a 13-bit baud rate modulo divisor, split across 2 registers.
+  //    SBH: 5 high bits
+  //    SBL: 8 low bits
   UART0->BDH &= ~(UART0_BDH_SBR_MASK);
-  UART0->BDH |= UART0_BDH_SBR(0);
+  UART0->BDH |= UART0_BDH_SBR(UART0_SBR>>8); /* 5 high bits */
+
   UART0->BDL &= ~(UART0_BDL_SBR_MASK);
-  UART0->BDL |= UART0_BDL_SBR(26);
+  UART0->BDL |= UART0_BDL_SBR(UART0_SBR & 0xFF); /* 8 low bits */
 
   // Oversampling ratio for receiver
-  // 0x00011 =  4x (min)
-  // 0x11111 = 32x (max)
+  //   0x00011 =  4x (min)
+  //   0x11111 = 32x (max)
   UART0->C4 &= ~(UART0_C4_OSR_MASK);
-  UART0->C4 |= UART0_C4_OSR(0x7); // 8x OSR
+  UART0->C4 |= UART0_C4_OSR(UART0_OVERSAMPLING - 1);
 
   // Double effective OSR by sampling on both edges
   UART0->C5 |= UART0_C5_BOTHEDGE(1);
-
-  // BAUD rate = clock / ( (1+OSR)*SBR)
-  // Baud = 24MHz / ( (1+7)*26 ) = 115385
-  // Error ~1.0%
-  // TODO: OSR and SBR should be calculated using BAUD, CLOCK
 
   // TX invert (0 normal, 1 = invert)
   UART0->C3 &= ~UART0_C3_TXINV_MASK;
@@ -97,36 +90,43 @@ UART_status_t UART_configure()
 
 UART_status_t UART_send(uint8_t *data)
 {
-
-  CB_add_item(&txbuf, *data);
-  NVIC_SetPendingIRQ(UART0_IRQn);  // kick interrupt handler
-  while(!CB_is_empty(&txbuf)) {
-    //NVIC_SetPendingIRQ(UART0_IRQn);
-  };
+  /* Wait until we successfully queue the data */
+  while( CB_add_item(&txbuf, *data) != CB_OK );
+  /* Kick the interrupt handler, which will either process the transmission
+     immediately or refire when it is ready */
+  NVIC_SetPendingIRQ(UART0_IRQn);
+  /* Block until the requested byte has been sent. Unnecessary, but required by
+     the project specification. */
+  while(!CB_is_empty(&txbuf)) {};
 
   return UART_OK;
 }
 
 UART_status_t UART_send_n(uint8_t *data, size_t num_bytes)
 {
-
+  CB_status_t cb_stat;
+  /* Ensure all bytes are placed on the TX queue */
   while( num_bytes > 0 ) {
-    CB_add_item(&txbuf, *data++);
-    num_bytes--;
+    /* NOTE: Until proper locking is done in the circular buffer structure, we
+       can expect a race condition here when the buffer is near empty */
+    cb_stat = CB_add_item(&txbuf, *data);
+    if( cb_stat == CB_OK ) {
+      data++;
+      num_bytes--;
+    }
   }
-  NVIC_SetPendingIRQ(UART0_IRQn);  // kick interrupt handler
-  while(!CB_is_empty(&txbuf)) {
-    //NVIC_SetPendingIRQ(UART0_IRQn);
-  };
+  /* Kick the interrupt handler to start the transmission */
+  NVIC_SetPendingIRQ(UART0_IRQn);
+  /* Block until all the requested bytes have been sent. This is unnecessary but
+     required by the project specification. */
+  while(!CB_is_empty(&txbuf)) {};
 
   return UART_OK;
 }
 
 UART_status_t UART_receive(uint8_t *data)
 {
-
-  // block until data
-  //   ...alternate, just check return status of remove_item?
+  // Block until we can collect a byte of data off the RX queue. */
   while(CB_is_empty(&rxbuf)) {};
   CB_remove_item(&rxbuf, data);
 
@@ -136,9 +136,10 @@ UART_status_t UART_receive(uint8_t *data)
 UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes)
 {
   while( num_bytes > 0 ) {
-    while(CB_is_empty(&rxbuf)) {};
-    CB_remove_item(&rxbuf, data++);
-    num_bytes--;
+    if(CB_remove_item(&rxbuf, data) == CB_OK) {
+      data++;
+      num_bytes--;
+    }
   }
 
   return UART_OK;

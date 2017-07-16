@@ -16,10 +16,27 @@
 #include <stddef.h>
 #include <circular_buffer.h>
 
-/* The baud rate to be used when configuring the UART */
-/* TODO: Also need to calculate OSR/SBR configuration values */
-#define UART_BAUD_RATE 115200
+/* The target baud rate. A clock divisor will be calculated to best approximate
+   this baud rate. With a 48MHz core clock (24MHz UART0 clock), 115.2k is a
+   stable baud rate. */
+#define UART0_BAUD_RATE (115200)
 
+/* The oversampling rate (OSR) that will be used on the receiver (4x-16x).
+   Lowering this value will reduce receiver accuracy, but may allow better
+   approximations of the target baud rate. The value is effectively doubled
+   due to sampling on both edges of the clock. */
+#define UART0_OVERSAMPLING (8)
+
+/* The UART0 clock is PLL source divided by 2, or the unmodified FLL source */
+#define PLLFLL_DIV (((SYSTEM_SIM_SOPT2_VALUE & SIM_SOPT2_PLLFLLSEL_MASK) >> SIM_SOPT2_PLLFLLSEL_SHIFT) + 1)
+#define UART0_CLK_SPEED (DEFAULT_SYSTEM_CLOCK / PLLFLL_DIV)
+
+/* Determine 13-bit clock divider setting (SBR) to create the UART baud rate clock.
+   The formula for the baud rate clock is: UART0_CLK / ((OSR + 1) * SBR).
+   The system PLL clock is divided by 2 for UART0. */
+#define UART0_SBR (UART0_CLK_SPEED / (UART0_BAUD_RATE * UART0_OVERSAMPLING))
+
+/* The buffer size to use for the RX/TX circular buffers. */
 #define UART_BUF_SIZE 200  /* bytes */
 
 extern CircBuf_t rxbuf;
@@ -27,8 +44,8 @@ extern CircBuf_t txbuf;
 
 typedef enum
 {
-  UART_OK = 0,
-  UART_NULL
+  UART_OK = 0,  /* UART function was successful */
+  UART_NULL     /* UART tried to operate on null pointer */
 } UART_status_t;
 
 /**
