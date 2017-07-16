@@ -144,6 +144,11 @@ UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes)
   return UART_OK;
 }
 
+size_t UART_queued_rx()
+{
+  return rxbuf.count;
+}
+
 void UART0_IRQHandler(void)
 {
   //__disable_irq();

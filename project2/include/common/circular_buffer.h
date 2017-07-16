@@ -134,12 +134,11 @@ CB_status_t CB_is_empty(CircBuf_t *circbuf);
  * If position+1 is greater than the number of items stored in the buffer,
  * CB_SIZE_ERR will be returned.
  *
- * @param[in] circbuf  A pointer to the initialized circular buffer to be read
- * @param[in] position The position back from the head to peek into
- * @param[out] item    The address to store the value of the peeked at item
- * @return Returns C
+ * @param[in]  circbuf  A pointer to the initialized circular buffer to be read
+ * @param[in]  position The position back from the head to peek into
+ * @param[out] item     The address to store the value of the peeked at item
+ * @return Returns CB_OK if the peek succeeds, otherwise an error status
  **/
 CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item);
-
 
 #endif /* __CIRCULAR_BUFFER_H__ */

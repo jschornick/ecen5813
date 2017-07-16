@@ -92,6 +92,18 @@ UART_status_t UART_receive(uint8_t *data);
 UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes);
 
 /**
+ * @brief Return the number of items queued in the RX buffer
+ *
+ * Bytes asynchronously received by the UART are stored in a private buffer
+ * until processed by the `UART_receieve*` functions. This reports the number
+ * of received but unprocessed bytes. Calling `receive_n` with this count
+ * will return without blocking.
+ *
+ * @return Returns the number of bytes queued in the UART RX buffer
+ **/
+size_t UART_queued_rx();
+
+/**
  * @brief Interrupt handler called on UART transmit/receive
  *
  * Interrupt handler call on UART transmit/receive
