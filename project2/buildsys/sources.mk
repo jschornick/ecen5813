@@ -9,8 +9,11 @@
 COMMON_SRCS = \
   circular_buffer.c \
   conversion.c \
+  io.c \
   main.c \
   memory.c \
+  platform.c \
+  processor.c \
   project2.c
 
 # Platform-specific source files
