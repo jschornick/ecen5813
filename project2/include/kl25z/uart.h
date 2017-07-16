@@ -20,7 +20,7 @@
 /* TODO: Also need to calculate OSR/SBR configuration values */
 #define UART_BAUD_RATE 115200
 
-#define UART_BUF_SIZE 100  /* bytes */
+#define UART_BUF_SIZE 200  /* bytes */
 
 extern CircBuf_t rxbuf;
 extern CircBuf_t txbuf;
