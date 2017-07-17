@@ -11,7 +11,9 @@
 
 #ifdef KL25Z
 
+#include "MKL25Z4.h"
 #include "system_MKL25Z4.h"
+#include "core_cm0plus.h"
 #include "led.h"
 #include "uart.h"
 
@@ -26,10 +28,6 @@ void platform_init(void) {
   UART_send_n( (uint8_t *) "\r\n** FRDM-KL25Z Reset **\r\n", 26);
 }
 
-#else /* HOST/BBB */
-
-void platform_init(void)
-{
-};
+uint32_t critical_primask = 0;
 
 #endif

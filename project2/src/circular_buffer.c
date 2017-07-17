@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "circular_buffer.h"
+#include "platform.h"
 
 CB_status_t CB_init(CircBuf_t *circbuf, size_t size)
 {
@@ -57,17 +58,19 @@ CB_status_t CB_add_item(CircBuf_t *circbuf, uint8_t item)
     return CB_FULL;
   }
 
-  /* TODO: The modification of the head pointer, data buffer, and item count
-     below should be considered a critical section. The code needs to be
-     protected by locking or other technique to guarantee consistency when
-     the circular buffer is modified and accessed simultaneously both in and out
-     of interrupt. */
+  /* NOTE: The modification of the head pointer, data buffer, and item count
+     below must be treated as a critical section. The code needs to be protected
+     to guarantee consistency when the circular buffer is modified and accessed
+     simultaneously both in and out of interrupt. */
+
+  critical_start();
   if( ++(circbuf->head) == (circbuf->buffer + circbuf->size) )
   {
     circbuf->head = circbuf->buffer;
   }
   *(circbuf->head) = item;
   circbuf->count++;
+  critical_end();
 
   return CB_OK;
 }
@@ -83,17 +86,20 @@ CB_status_t CB_remove_item(CircBuf_t *circbuf, uint8_t *item)
     return CB_EMPTY;
   }
 
-  /* TODO: The modification of the tail pointer, data buffer, and item count
-     below should be considered a critical section. The code needs to be
-     protected by locking or other technique to guarantee consistency when
-     the circular buffer is modified and accessed simultaneously both in and out
-     of interrupt. */
+  /* NOTE: The modification of the tail pointer, data buffer, and item count
+     must be treated as a critical section. The code needs to be protected to
+     guarantee consistency when the circular buffer is modified and accessed
+     simultaneously both in and out of interrupt. */
+
+  critical_start();
   if( ++(circbuf->tail) == (circbuf->buffer + circbuf->size) )
   {
     circbuf->tail = circbuf->buffer;
   }
   *item = *(circbuf->tail);
   circbuf->count--;
+  critical_end();
+
   return CB_OK;
 }
 
@@ -133,11 +139,14 @@ CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item)
   {
     return CB_SIZE_ERR;
   }
-  /* TODO: The calculation of the head offset and the data retrieval below
-     should be considered a critical section. The code needs to be protected by
-     locking or other technique to guarantee consistency when the circular
-     buffer is modified during interrupt. */
+
+  /* NOTE: The calculation of the head offset and the associated data retrieval
+     must be treated as a critical section. The code needs to be protected to
+     guarantee consistency in the case of simultaneous read/modify in and out of
+     interrupt. */
+
   /* Find the peeked item, but wrap around if necessary */
+  critical_start();
   if( circbuf->head - position >= circbuf->buffer )
   {
     *item = *(circbuf->head - position);
@@ -146,6 +155,8 @@ CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item)
   {
     *item = *((circbuf->head - position) + circbuf->size);
   }
+  critical_end();
+
   return CB_OK;
 }
 

@@ -104,13 +104,9 @@ UART_status_t UART_send(uint8_t *data)
 
 UART_status_t UART_send_n(uint8_t *data, size_t num_bytes)
 {
-  CB_status_t cb_stat;
   /* Ensure all bytes are placed on the TX queue */
   while( num_bytes > 0 ) {
-    /* NOTE: Until proper locking is done in the circular buffer structure, we
-       can expect a race condition here when the buffer is near empty */
-    cb_stat = CB_add_item(&txbuf, *data);
-    if( cb_stat == CB_OK ) {
+    if( CB_add_item(&txbuf, *data) == CB_OK) {
       data++;
       num_bytes--;
     }
@@ -152,8 +148,7 @@ size_t UART_queued_rx()
 
 void UART0_IRQHandler(void)
 {
-  //__disable_irq();
-  NVIC_ClearPendingIRQ(UART0_IRQn);
+  __disable_irq();
 
   uint8_t item = 0x0;
   if(UART0->S1 & UART0_S1_TDRE_MASK) {
@@ -166,15 +161,13 @@ void UART0_IRQHandler(void)
       UART0->C2 &= ~(UART0_C2_TE_MASK); // TX disable
       UART0->D = item;
       UART0->C2 |= UART0_C2_TE(1); // 1 = TX enable
-    }
+      }
   }
 
   if(UART0->S1 & UART0_S1_RDRF_MASK) {
-    //led_on(BLUE_LED);
     // reading UART0->D clears the RDRF interrupt flag
     CB_add_item(&rxbuf, UART0->D);
-    //led_off(BLUE_LED);
   }
 
-  //__enable_irq();
+  __enable_irq();
 }
