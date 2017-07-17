@@ -95,3 +95,14 @@ $ make flash PLATFORM=KL25Z
 ```
 The image will be rebuilt if necessary.
 
+## Debug
+
+The program for the KL25Z can be easily debugged using GDB/OpenOCD:
+
+```
+$ make debug PLATFORM=KL25Z
+```
+This command will used OpenOCD to connect to the CMSIS-DAP debugging interface
+on the KL25Z. GDB will be automatically loaded with the currently built binary,
+so debugging can begin immediately.
+

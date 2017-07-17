@@ -1,0 +1,9 @@
+file project2_KL25Z.elf
+tui enable
+target remote | openocd -f platform/openocd_kl25z_debug.cfg -c "gdb_port pipe; log_output /tmp/openocd.log"
+load
+layout regs
+winheight regs 7
+winheight src +20
+set remote hardware-breakpoint-limit 2
+set remote hardware-watchpoint-limit 2

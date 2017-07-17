@@ -60,6 +60,19 @@ flash:
 	@echo Flashing not supported on PLATFORM=$(PLATFORM)
 endif
 
+.PHONY: debug
+ifeq ($(PLATFORM), KL25Z)
+debug: $(EXE)
+	@echo Starting GDB/OpenOCD for debugging
+	@echo -------------------
+	@arm-none-eabi-gdb -x platform/gdbinit_kl25z
+	@echo -------------------
+	@echo Debug session complete
+else
+debug:
+	@echo Debug only supported for KL25Z
+endif
+
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
