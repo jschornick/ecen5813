@@ -13,28 +13,39 @@
 #include <stdlib.h>
 #include "circular_buffer.h"
 
-/* Do CB_init and CB_destory handle dynamic allocation of the buffer? */
+/* Verify that CB_init and CB_destory handle dynamic allocation/deallocation of
+ * the data buffer. */
 void test_circbuf_allocate_free(void **state)
 {
   CircBuf_t cb1, cb2;
 
+  /* Force the buffer pointer to null to ensure allocation occurs */
+  cb1.buffer = NULL;
+  cb2.buffer = NULL;
+
+  /* No data buffers should be NULL after allocation */
   CB_init(&cb1, 10);
   CB_init(&cb2, 10);
+
+  /* Different heap memory should be allocated for each */
   assert_non_null(cb1.buffer);
   assert_non_null(cb2.buffer);
   assert_ptr_not_equal(cb1.buffer, cb2.buffer);
-  CB_destroy(&cb1);
-  CB_destroy(&cb2);
+
+  /* Ensure destroy completes succesfully */
+  assert_int_equal(CB_destroy(&cb1), CB_OK);
+  assert_int_equal(CB_destroy(&cb2), CB_OK);
 }
 
-
-/* Does CB_init creates initizlizes the CB record properly? */
+/* Verify CB_init initizlizes the CB record members properly. */
 void test_circbuf_initialized(void **state)
 {
   CircBuf_t cb;
   size_t size = 10;
 
   CB_init(&cb, size);
+
+  /* After CB_init, all members should be set to the default values. */
   assert_non_null(cb.buffer);
   assert_int_equal(cb.count, 0);
   assert_int_equal(cb.size, size);
@@ -48,7 +59,8 @@ void test_circbuf_handles_null(void **state)
   CircBuf_t cb;
   uint8_t x = 42;
 
-  /* Check that we can handle NULL CircBuf_t pointers */
+  /* Check that we can handle NULL CircBuf_t pointers. Any null parameter should
+     result in a status of CB_NULL. */
   assert_int_equal( CB_init(NULL, 1), CB_NULL );
   assert_int_equal( CB_destroy(NULL), CB_NULL );
   assert_int_equal( CB_add_item(NULL, x), CB_NULL );
@@ -57,14 +69,14 @@ void test_circbuf_handles_null(void **state)
   assert_int_equal( CB_is_empty(NULL), CB_NULL );
   assert_int_equal( CB_peek(NULL, 1, &x), CB_NULL );
 
-  /* Check that we can handle NULL item pointers */
+  /* Check that we can handle NULL item pointers as well. */
   CB_init(&cb, 10);
   assert_int_equal( CB_remove_item(&cb, NULL), CB_NULL );
   assert_int_equal( CB_peek(&cb, 1, NULL), CB_NULL );
 }
 
-/* Make sure we can add and remove the same items for the entire length of
-   the buffer, receiving OK status each time. */
+/* Ensure we can add and remove the same items for the entire length of the
+   buffer, receiving OK status each time. */
 void test_circbuf_add_remove(void **state)
 {
   CircBuf_t cb;
@@ -73,19 +85,20 @@ void test_circbuf_add_remove(void **state)
 
   CB_init(&cb, size);
 
-  /* Push the values 1-5 into the circular buffer */
+  /* Push the values 1-5 into the circular buffer, verify status is CB_OK. */
   for( uint8_t i=0; i<size; i++) {
     assert_int_equal( CB_add_item(&cb, i), CB_OK );
   }
 
-  /* Verify that we get the 5 items back in the same order */
+  /* Verify that we get the 5 items back in the same order, each with CB_OK
+     status. */
   for( uint8_t i=0; i<size; i++) {
     assert_int_equal( CB_remove_item(&cb, &item), CB_OK );
     assert_int_equal(item, i);
   }
 }
 
-/* If we fill a circular buffer, it should report full, but before! */
+/* Check that a filled circular buffer reports full, but before! */
 void test_circbuf_reports_full(void **state)
 {
   CircBuf_t cb;
@@ -99,21 +112,22 @@ void test_circbuf_reports_full(void **state)
     CB_add_item(&cb, i);
     assert_false(CB_is_full(&cb));
   }
-  /* Add the last item, which should fill the buffer */
+  /* Add the last item, which should fill the buffer. Fullness check shoudl
+     return true. */
   CB_add_item(&cb, 42);
   assert_true(CB_is_full(&cb));
 
-  /* Remove an item to make space */
+  /* Remove an item to make space. */
   CB_remove_item(&cb, &item);
   assert_false(CB_is_full(&cb));
 
-  /* Put it back to check full again */
+  /* Put it back to check that the buffer is full again. */
   CB_add_item(&cb, 23);
   assert_true(CB_is_full(&cb));
 
 }
 
-/* If we empty a circular buffer it should report empty, but not when it has items */
+/* Check that an empty circular buffer reports empty, but not when it has items. */
 void test_circbuf_reports_empty(void **state)
 {
   CircBuf_t cb;
@@ -122,25 +136,26 @@ void test_circbuf_reports_empty(void **state)
 
   CB_init(&cb, size);
 
-  /* New buffer should be empty */
+  /* New buffer should be empty. Empty status should be true. */
   assert_true(CB_is_empty(&cb));
 
-  /* Push some items onto the buffer, should no longer be empty */
+  /* Push some items onto the buffer, should no longer report empty. */
   for( uint8_t i=0; i<size; i++) {
     CB_add_item(&cb, i);
     assert_false(CB_is_empty(&cb));
   }
-  /* Remove all but one */
+  /* Remove all but one item */
   for( uint8_t i=0; i<size-1; i++) {
     CB_remove_item(&cb, &item);
     assert_false(CB_is_empty(&cb));
   }
-  /* Remove last item to make empty */
+  /* Remove last item, and verify that status is now empty. */
   CB_remove_item(&cb, &item);
   assert_true(CB_is_empty(&cb));
 }
 
-/* Make sure the cicular buffer can wrap past end and add to front */
+/* Make sure the circular buffer can wrap past the end when adding, which should
+   add additional items starting at the beginning of the buffer. */
 void test_circbuf_wraps_on_add(void **state)
 {
   CircBuf_t cb;
@@ -150,7 +165,7 @@ void test_circbuf_wraps_on_add(void **state)
 
   CB_init(&cb, size);
 
-  /* Put the first item on and record the head pointer */
+  /* Put the first item on and record the head pointer for eventual test. */
   CB_add_item(&cb, 1);
   head_ptr = (uint8_t *) cb.head;
 
@@ -161,11 +176,12 @@ void test_circbuf_wraps_on_add(void **state)
   /* Remove the first item to make space */
   CB_remove_item(&cb, &item);
 
-  /* Put one more item at head, which should have wrapped around */
+  /* Put one more item at head, which should have wrapped around. The original
+     head_ptr should match the new head_ptr. */
   CB_add_item(&cb, 23);
   assert_ptr_equal(cb.head, head_ptr);
 
-  /* Make sure we can wrap many times in a small buffer */
+  /* Make sure we can wrap many times in a small buffer. */
   CB_destroy(&cb);
   CB_init(&cb, size);
   for(int i=1; i<100; i++){
@@ -177,7 +193,8 @@ void test_circbuf_wraps_on_add(void **state)
   }
 }
 
-/* Make sure the cicular buffer can wrap past front and remove from end */
+/* Make sure the cicular buffer removes can wrap past the beginning of the
+   buffer, which should remove from the end of the buffer instead. */
 void test_circbuf_wraps_on_remove(void **state)
 {
   CircBuf_t cb;
@@ -199,11 +216,11 @@ void test_circbuf_wraps_on_remove(void **state)
   CB_add_item(&cb, 4);
   CB_remove_item(&cb, &item);
 
-  /* Tail should be back where we started */
+  /* Verify that the new tail_ptr is back where we started */
   assert_ptr_equal(cb.tail, tail_ptr);
 }
 
-/* Make sure we fail gracefully when adding to full buffer */
+/* Make sure we fail gracefully when adding to full buffer. */
 void test_circbuf_handles_overfull(void **state)
 {
   CircBuf_t cb;
@@ -220,7 +237,7 @@ void test_circbuf_handles_overfull(void **state)
   assert_int_equal( CB_add_item(&cb, 42), CB_OK);
   assert_true(CB_is_full(&cb));
 
-  /* Try to add past full, should report FULL instead of OK */
+  /* Try to add past full, should report FULL instead of OK. */
   assert_int_equal( CB_add_item(&cb, 23), CB_FULL);
 }
 
@@ -242,7 +259,7 @@ void test_circbuf_handles_overempty(void **state)
   assert_int_equal( CB_remove_item(&cb, &item), CB_EMPTY );
 }
 
-/* Make sure we fail gracefully when adding to full buffer */
+/* Make sure CB_peek returns the correct value. */
 void test_circbuf_peek_returns_value(void **state)
 {
   CircBuf_t cb;
@@ -256,12 +273,13 @@ void test_circbuf_peek_returns_value(void **state)
     CB_add_item(&cb, i);
   }
 
-  /* Look back 2 items, make sure we get the right item */
+  /* Look back 2 items, make sure we get the right item. */
   CB_peek(&cb, 2, &item);
   assert_int_equal(item, 3);
 }
 
-/* Make sure we fail gracefully when adding to full buffer */
+/* Make sure peek can wrap around from the beginning to end and retreive the
+   correct value. */
 void test_circbuf_peek_wraps_around(void **state)
 {
   CircBuf_t cb;
@@ -286,7 +304,7 @@ void test_circbuf_peek_wraps_around(void **state)
 
 }
 
-/* Check that peek returns an error if we look back too far */
+/* Check that peek returns an error if we look back too far. */
 void test_circbuf_peek_checks_size(void **state)
 {
   CircBuf_t cb;
@@ -300,7 +318,9 @@ void test_circbuf_peek_checks_size(void **state)
     CB_add_item(&cb, i);
   }
 
+  /* A valid peek position should return CB_OK. */
   assert_int_equal( CB_peek(&cb, 3, &item), CB_OK);
+  /* A position too large for our data should return CB_SIZE_ERR */
   assert_int_equal( CB_peek(&cb, 7, &item), CB_SIZE_ERR);
 
 }
