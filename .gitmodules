@@ -3,3 +3,6 @@
 	url = https://git.cryptomilk.org/projects/cmocka.git
 	ignore = dirty
 
+[submodule "3rd-party/unity"]
+	path = 3rd-party/unity
+	url = https://github.com/ThrowTheSwitch/Unity
