@@ -46,6 +46,16 @@ unittests: $(LIBNAME)
 	@echo Building and running common unit tests...
 	cd tests/common && make runall
 
+.PHONY: plattests
+ifeq ($(PLATFORM), KL25Z)
+plattests: $(LIBNAME)
+	@echo Building and running platform-specific tests...
+	cd tests/kl25z && make flashtests
+else
+plattests:
+	@echo No platform-specific tests for platform $(PLATFORM)
+endif
+
 .PHONY: flash
 # Only support flashing on the KL25Z
 ifeq ($(PLATFORM), KL25Z)
@@ -86,4 +96,4 @@ clean:
 clean-all:
 	rm -rf $(BUILD_BASE) $(dir $(EXE))*.elf
 	make -C tests/common clean
-
+	make -C tests/kl25z clean

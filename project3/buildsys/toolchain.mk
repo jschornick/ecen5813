@@ -12,7 +12,8 @@ INCFLAGS = -I$(INC_DIR)/common
 
 CPPFLAGS += $(PROJFLAGS)
 
-LDFLAGS = -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
+MAPFILE=$(BUILD_DIR)/$(TARGET).map
+LDFLAGS = -Wl,-Map=$(MAPFILE)
 #LDFLAGS = -v  # verbose output during linking
 
 # Platform-specific flags

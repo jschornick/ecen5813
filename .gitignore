@@ -2,6 +2,7 @@ BUILDOUT
 *.elf
 *.bin
 */tests/*.run
+*.map
 
 # Kinetis Design Studio
 .cproject
