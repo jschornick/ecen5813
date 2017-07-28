@@ -48,6 +48,9 @@ EXE = $(TARGET)_$(PLATFORM).elf
 PROJFLAGS = -DPROJECT3
 PROJFLAGS += -DVERBOSE
 
+# Use DMA on the KL25Z
+KL25Z_USE_DMA=1
+
 # Makefile includes for the build system
 include $(BSYS_DIR)/toolchain.mk
 include $(BSYS_DIR)/sources.mk

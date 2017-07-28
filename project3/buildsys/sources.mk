@@ -22,6 +22,9 @@ else ifeq ($(PLATFORM),BBB)
 else ifeq ($(PLATFORM),KL25Z)
   PLATFORM_SRCS += system_MKL25Z4.c
   PLATFORM_SRCS += led_kl25z.c timer_kl25z.c uart_kl25z.c
+  ifdef KL25Z_USE_DMA
+    PLATFORM_SRCS += memory_kl25z.c dma_kl25z.c
+  endif
   ASM_SRCS += startup_MKL25Z4.S
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)

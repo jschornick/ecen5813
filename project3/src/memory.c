@@ -10,8 +10,13 @@
 
 #include <stdint.h>
 #include <stddef.h>  /* size_t, NULL */
-#include <stdlib.h>  /* malloc, free */
 #include "memory.h"
+
+#ifdef MEMORY_USES_DMA
+
+/* memmove() and memset() defined in platform-specific file */
+
+#else
 
 uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length)
 {
@@ -44,13 +49,6 @@ uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length)
   return dst;
 }
 
-uint8_t *my_memcpy(uint8_t *src, uint8_t *dst, size_t length) {
-  /* Per the project specification, my_memmove() performs an equivalent
-     operation to my_memcopy(), though less stringent and allowing for potential
-     corruption when the memory regions overlap. */
-  return my_memmove(src, dst, length);
-}
-
 uint8_t *my_memset(uint8_t *src, size_t length, uint8_t value) {
   /* NULL src is invalid */
   if ((src == NULL) || (length <= 0))
@@ -66,6 +64,14 @@ uint8_t *my_memset(uint8_t *src, size_t length, uint8_t value) {
   } while (ptr >= src);
 
   return src;
+}
+#endif
+
+uint8_t *my_memcpy(uint8_t *src, uint8_t *dst, size_t length) {
+  /* Per the project specification, my_memmove() performs an equivalent
+     operation to my_memcopy(), though less stringent and allowing for potential
+     corruption when the memory regions overlap. */
+  return my_memmove(src, dst, length);
 }
 
 uint8_t *my_memzero(uint8_t *src, size_t length) {
