@@ -19,6 +19,13 @@
 #define CONVERT_SUCCESS (0)
 #define CONVERT_FAIL (1)
 
+#define ITOA_MAX_DIGITS (32) /* int32_t minimum is -2^31 : 32 digits in sign-magnitude form */
+#define ITOA_MAX_CHARS (ITOA_MAX_DIGITS + 2) /* digits, negative sign, newline */
+
+/* Quick conversion between integer 0-16 and ASCII hex */
+#define TO_ASCII(x) ( (x)<10 ? (x)+'0' : (x)+'A'-10 )
+#define FROM_ASCII(x) ( (x)<='9' ? (x)-'0' : (x)-'A'+10 )
+
 #include <stdint.h>
 
 /**

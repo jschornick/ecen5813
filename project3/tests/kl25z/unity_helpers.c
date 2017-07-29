@@ -9,8 +9,7 @@ void unity_output_start(void) {
 }
 
 void unity_output_char(int a) {
-  uint8_t c = a;
-  UART_send(&c);
+  UART_send(a);
 }
 
 #endif

@@ -1,7 +1,7 @@
 BUILDOUT
 *.elf
 *.bin
-*/tests/*.run
+*.run
 *.map
 
 # Kinetis Design Studio

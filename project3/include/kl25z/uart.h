@@ -68,7 +68,7 @@ UART_status_t UART_configure();
  * @param[in] data A pointer to the data byte to be sent
  * @return Returns UART_OK if send succeeds
  **/
-UART_status_t UART_send(uint8_t *data);
+UART_status_t UART_send(uint8_t data);
 
 /**
  * @brief Send an array of bytes through the UART device

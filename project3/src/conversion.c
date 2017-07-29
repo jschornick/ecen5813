@@ -13,12 +13,6 @@
 #include <stdlib.h> /* malloc, free */
 #include "conversion.h"
 
-#define MAX_INT32_DIGITS (32) /* Up to 32 numeric digits in binary */
-
-/* Quick conversion between integer 0-16 and ASCII hex */
-#define TO_ASCII(x) ( (x)<10 ? (x)+'0' : (x)+'A'-10 )
-#define FROM_ASCII(x) ( (x)<='9' ? (x)-'0' : (x)-'A'+10 )
-
 /* Byte masks for endianness conversion */
 #define BYTE1 ( (uint32_t) 0x000000FF)
 #define BYTE2 ( (uint32_t) 0x0000FF00)
@@ -42,7 +36,7 @@ uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base)
     mag = -data;
   }
 
-  uint8_t digits[MAX_INT32_DIGITS]; /* allocate on stack to avoid malloc/free */
+  uint8_t digits[ITOA_MAX_DIGITS]; /* allocate on stack to avoid malloc/free */
   uint8_t *digit_ptr = digits;
   /* Record the least significant digit, drop an order of magnitude, and repeat
      until nothing is left */

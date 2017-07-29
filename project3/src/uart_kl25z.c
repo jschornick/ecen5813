@@ -88,10 +88,10 @@ UART_status_t UART_configure()
   return UART_OK;
 }
 
-UART_status_t UART_send(uint8_t *data)
+UART_status_t UART_send(uint8_t data)
 {
   /* Wait until we successfully queue the data */
-  while( CB_add_item(&txbuf, *data) != CB_OK );
+  while( CB_add_item(&txbuf, data) != CB_OK );
   /* Kick the interrupt handler, which will either process the transmission
      immediately or refire when it is ready */
   NVIC_SetPendingIRQ(UART0_IRQn);

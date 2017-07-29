@@ -16,12 +16,15 @@ COMMON_SRCS = \
 
 # Platform-specific source files
 ifeq ($(PLATFORM),HOST)
-  # no additional sources
+  PLATFORM_SRCS += io_std.c
 else ifeq ($(PLATFORM),BBB)
-  # no additional sources
+  PLATFORM_SRCS += io_std.c
 else ifeq ($(PLATFORM),KL25Z)
   PLATFORM_SRCS += system_MKL25Z4.c
-  PLATFORM_SRCS += led_kl25z.c timer_kl25z.c uart_kl25z.c
+  PLATFORM_SRCS += timer_kl25z.c
+  PLATFORM_SRCS += uart_kl25z.c
+  PLATFORM_SRCS += led_kl25z.c
+  PLATFORM_SRCS += io_kl25z.c
   ifdef KL25Z_USE_DMA
     PLATFORM_SRCS += memory_kl25z.c dma_kl25z.c
   endif
