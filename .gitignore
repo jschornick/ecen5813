@@ -4,6 +4,8 @@ BUILDOUT
 *.run
 *.map
 
+.gdb_history
+
 # Kinetis Design Studio
 .cproject
 .project

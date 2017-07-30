@@ -8,7 +8,7 @@ PROJECT_DIR=../..
 PROJECT_INCLUDE=-I$(PROJECT_DIR)/include/common
 PROJECT_LIB=$(PROJECT_DIR)/BUILDOUT/HOST/libproject3.a
 
-CFLAGS=-Wall -Werror
+CFLAGS=-Wall -Werror -g
 
 TESTS=$(patsubst %.c, %.run, $(wildcard test_*.c))
 

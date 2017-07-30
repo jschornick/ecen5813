@@ -10,6 +10,7 @@ COMMON_SRCS = \
   circular_buffer.c \
   conversion.c \
   logger.c \
+  log_queue.c \
   main.c \
   memory.c \
   platform.c \
