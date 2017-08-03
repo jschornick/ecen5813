@@ -11,6 +11,22 @@
 
 #include <stdint.h>
 
+#define NRF_CMD_READ (0x00)
+#define NRF_CMD_WRITE (0x20)
+#define NRF_CMD_FLUSH_TX (0xE1)
+#define NRF_CMD_FLUSH_RX (0xE0)
+#define NRF_CMD_NOP (0xFF)  /* can be used to read status */
+
+#define NRF_REG_CONFIG (0x00)
+#define NRF_REG_RF_CH (0x05)
+#define NRF_REG_RF_SETUP (0x06)
+#define NRF_REG_STATUS (0x07)
+#define NRF_REG_TX_ADDR (0x10)
+#define NRF_REG_FIFO_STATUS (0x17)
+
+#define NRF_PWR_MASK (0x02)
+#define NRF_PWR_UP(x) (x<<1)
+
 /**
  * @brief Read an nRF register and return the value
  *
