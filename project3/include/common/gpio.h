@@ -8,6 +8,9 @@
  * @date 2017/07/31
  **/
 
+#include <stdint.h>
+#include "platform.h"
+
 /**
  * @brief Configure the GPIO pins to communicate with an nRF module over SPI
  *
@@ -18,3 +21,8 @@
  * @return Nothing returned.
  **/
 void gpio_nrf_init(void);
+
+void gpio_spi_init(void);
+
+void gpio_high(GPIO_Type *gpio, uint8_t pin);
+void gpio_low(GPIO_Type *gpio, uint8_t pin);

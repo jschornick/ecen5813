@@ -20,8 +20,12 @@ COMMON_SRCS = \
 # Platform-specific source files
 ifeq ($(PLATFORM),HOST)
   PLATFORM_SRCS += io_std.c
+  PLATFORM_SRCS += gpio_fake.c
+  PLATFORM_SRCS += spi_fake.c
 else ifeq ($(PLATFORM),BBB)
   PLATFORM_SRCS += io_std.c
+  PLATFORM_SRCS += gpio_fake.c
+  PLATFORM_SRCS += spi_fake.c
 else ifeq ($(PLATFORM),KL25Z)
   PLATFORM_SRCS += gpio_kl25z.c
   PLATFORM_SRCS += io_kl25z.c

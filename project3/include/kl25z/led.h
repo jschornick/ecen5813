@@ -9,26 +9,8 @@
 #ifndef __LED_H__
 #define __LED_H__
 
-#include <MKL25Z4.h>
 #include <stdint.h>
-
-/* Red LED connected to PB18. Active low. */
-#define RED_LED_PORT PORTB
-#define RED_LED_GPIO GPIOB
-#define RED_LED_PIN 18
-#define RED_LED RED_LED_GPIO, RED_LED_PIN
-
-/* Green LED connected to PB19. Active low. */
-#define GREEN_LED_PORT PORTB
-#define GREEN_LED_GPIO GPIOB
-#define GREEN_LED_PIN 19
-#define GREEN_LED GREEN_LED_GPIO, GREEN_LED_PIN
-
-/* Blue LED connected to PD1. Active low. */
-#define BLUE_LED_PORT PORTD
-#define BLUE_LED_GPIO GPIOD
-#define BLUE_LED_PIN 1
-#define BLUE_LED BLUE_LED_GPIO, BLUE_LED_PIN
+#include "platform.h"
 
 /**
  * @brief Configure the KL25Z so that the LEDs can be used
