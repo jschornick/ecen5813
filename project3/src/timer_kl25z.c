@@ -11,6 +11,7 @@
 
 #include "MKL25Z4.h"  /* includes core_cm0plus.h */
 #include "led.h"
+#include "logger.h"
 #include "timer.h"
 
 volatile uint32_t timer_counter = 0;
@@ -75,6 +76,7 @@ void TPM0_IRQHandler(void)
   {
     if( (timer_counter & 0x7) == 0) {
       led_toggle(GREEN_LED);
+      log_msg(HEARTBEAT, NULL, 0);
     }
     // Write 1 to TOF to clear flag
     TPM0->SC |= TPM_SC_TOF_MASK;
