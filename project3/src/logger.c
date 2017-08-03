@@ -8,13 +8,14 @@
  **/
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "io.h"
 #include "conversion.h"
 #include "logger.h"
 #include "log_queue.h"
 
-#define SYSTEM_LOG_SIZE (200)
+#define SYSTEM_LOG_SIZE (1000)
 
 Log_q system_log;
 uint32_t faketime = 1000;
@@ -60,6 +61,23 @@ void log_msg(Log_id_t id, uint8_t *data, size_t length)
   lq_add(&system_log, &log);
 }
 
+void log_val(int32_t val, char *label)
+{
+  Log_t log;
+  log.time = faketime++;
+  log.id = LABELED_VALUE;
+  log.length = sizeof(val) + strlen(label) + 1;
+  log.data = malloc(log.length);
+  *( (uint32_t *) log.data) = val;
+  strncpy((char *) log.data+4, label, log.length-sizeof(val));
+  lq_add(&system_log, &log);
+}
+
+void log_info(char *str)
+{
+  log_msg(INFO, (uint8_t *) str, strlen(str) + 1);
+}
+
 void log_flush(void)
 {
   while( !lq_empty(&system_log) )
@@ -78,11 +96,14 @@ void log_flush(void)
       case LOGGER_INITIALIZED:
         log_string((uint8_t *) "Logger initialized.");
         break;
+      case SYSTEM_INITIALIZED:
+        log_string((uint8_t *) "System initialized.");
+        break;
       case GPIO_INITIALIZED:
         log_string((uint8_t *) "GPIO initialized.");
         break;
-      case SYSTEM_INITIALIZED:
-        log_string((uint8_t *) "System initialized.");
+      case SPI_INITIALIZED:
+        log_string((uint8_t *) "SPI initialized.");
         break;
       case SYSTEM_HALTED:
         log_string((uint8_t *) "System halt.");
@@ -118,8 +139,14 @@ void log_flush(void)
       case DATA_MISC_COUNT:
         log_string((uint8_t *) "Data processor log entry");
         break;
+      case LABELED_VALUE:
+        log_string( (uint8_t *) "INFO: ");
+        log_string(log.data+4);
+        log_string( (uint8_t *) " = ");
+        log_int(*((uint32_t *) log.data));
+        break;
       case HEARTBEAT:
-        log_string((uint8_t *) "Heartbeat");
+        log_string((uint8_t *) ".");
         break;
     }
     log_string( (uint8_t *) "\n");

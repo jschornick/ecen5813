@@ -26,6 +26,10 @@ void log_item(Log_t *item);
 
 void log_msg(Log_id_t id, uint8_t *data, size_t length);
 
+void log_info(char *str);
+
+void log_val(int32_t val, char *label);
+
 void log_flush(void);
 
 
