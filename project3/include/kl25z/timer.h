@@ -18,12 +18,18 @@
 /*** SysTick, System Timer ***/
 
 /* At 48MHz, reloads every ~0.35 seconds */
-#define SYSTICK_MAX (0x00FFFFFF)
+#define SYSTICK_MAX (0x00FFFFFFu)
+#define SYSTICK_MAX_MS TICKS_TO_MS(SYSTICK_MAX)
+#define SYSTICK_MAX_US TICKS_TO_US(SYSTICK_MAX)
 
 /* Tick to time conversion macros */
 /* To maintain numerical accuracy, first multiply ticks (24-bit) by 250 */
-#define TICKS_IN_MS(x) ( ((x) * 250) / (DEFAULT_SYSTEM_CLOCK/4))
-#define TICKS_IN_US(x) ( ((x) * 250) / (DEFAULT_SYSTEM_CLOCK/4000))
+#define TICKS_TO_MS(x) ( ((x) * 250) / (DEFAULT_SYSTEM_CLOCK/4))
+#define TICKS_TO_US(x) ( ((x) * 250) / (DEFAULT_SYSTEM_CLOCK/4000))
+
+// MS: 0-350
+#define MS_TO_TICKS(x) ( (DEFAULT_SYSTEM_CLOCK / 1000) * (x) )
+#define US_TO_TICKS(x) ( (DEFAULT_SYSTEM_CLOCK / 1000000) * (x) )
 
 /**
  * @brief Configure and enable the System Timer (SysTick)
@@ -99,8 +105,8 @@ __attribute__((always_inline)) static inline uint32_t elapsed_ticks(uint32_t sta
 #define TIMER_PS_VAL (7)
 #define TIMER_SCALE (128)
 
-/* Target timer period, 125ms */
-#define TIMER_TARGET_MS (125)
+/* Target timer period, 100ms */
+#define TIMER_TARGET_MS (100)
 
 /* Up-counting modulo value calculation (see KL25 TRM p563) */
 #define TIMER_MOD_VAL (((TIMER_CLK_FREQ / TIMER_SCALE) * TIMER_TARGET_MS) / 1000 - 1)
@@ -118,5 +124,11 @@ extern volatile uint32_t timer_counter;
  * @return Nothing returned
 **/
 void timer_setup(void);
+
+void delay_ms(uint32_t ms);
+
+void delay_us(uint16_t us);
+
+uint32_t get_time(void);
 
 #endif /* __TIMER_H__ */

@@ -8,8 +8,6 @@ CFLAGS += -Wall -Werror
 CFLAGS += -g -O0
 
 CPPFLAGS += $(INCFLAGS)
-INCFLAGS = -I$(INC_DIR)/common
-
 CPPFLAGS += $(PROJFLAGS)
 
 MAPFILE=$(BUILD_DIR)/$(TARGET).map
@@ -49,6 +47,8 @@ else ifeq ($(PLATFORM),KL25Z)
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)
 endif
+
+INCFLAGS += -I$(INC_DIR)/common
 
 # Define the compiler and binutils for our toolchain
 CC = $(TOOLCHAIN)gcc

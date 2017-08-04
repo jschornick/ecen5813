@@ -31,7 +31,8 @@ void platform_init(void) {
   led_setup();
   led_on(GREEN_LED);
 
-  timer_setup();  // heartbeat, systick
+  systick_setup();
+  timer_setup();  // every xyz ms
   dma_setup();
 
   UART_configure();

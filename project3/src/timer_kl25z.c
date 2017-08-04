@@ -1,5 +1,5 @@
 /**
- * @file timer.c
+ * @file timer_kl52z.c
  * @brief Function definitions for timer peripherals and SysTick.
  *
  * Includes initialization/configuration of the TPM0 timer and SysTick (system
@@ -15,6 +15,8 @@
 #include "timer.h"
 
 volatile uint32_t timer_counter = 0;
+volatile uint32_t timer_ticks;
+uint32_t startup_ticks;
 
 void systick_setup(void)
 {
@@ -36,6 +38,8 @@ void systick_setup(void)
   SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;
   // Start timer running
   SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+
+  startup_ticks = get_ticks();
 }
 
 void timer_setup(void)
@@ -62,19 +66,40 @@ void timer_setup(void)
 
   TPM0->SC |= TPM_SC_CMOD(1);  // Increment on internal clock source (enables timer)
 
+  timer_ticks = get_ticks();
+
   /* Allow TPM0 interrupt the CPU */
   /*   (see: core_cm0plus.h, MKL25Z4.h) */
   NVIC_ClearPendingIRQ(TPM0_IRQn);
   NVIC_EnableIRQ(TPM0_IRQn);
 }
 
+void delay_ms(uint32_t ms)
+{
+  ms = (ms > SYSTICK_MAX_MS) ? SYSTICK_MAX_MS : ms;
+  uint32_t start = get_ticks();
+  while( elapsed_ticks(start) < MS_TO_TICKS(ms) ) {};
+}
+
+void delay_us(uint16_t us)
+{
+  uint32_t start = get_ticks();
+  while( elapsed_ticks(start) < US_TO_TICKS(us) ) {};
+}
+
+uint32_t get_time()
+{
+  return timer_counter * TIMER_TARGET_MS + TICKS_TO_MS(elapsed_ticks(timer_ticks));
+}
+
 /* Increment counter and process heartbeat every overflow */
 void TPM0_IRQHandler(void)
 {
   timer_counter++;
+  timer_ticks = get_ticks();
   if (TPM0->SC & TPM_SC_TOF_MASK)
   {
-    if( (timer_counter & 0x7) == 0) {
+    if( (timer_counter % 10 ) == 0) {
       led_toggle(GREEN_LED);
       log_msg(HEARTBEAT, NULL, 0);
     }
