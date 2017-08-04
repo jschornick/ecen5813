@@ -128,7 +128,7 @@ void nrf_read_tx_addr(uint8_t * address);
  * @param[in] address The address that points to the 40-bit register value to write
  * @return Nothing returned
  **/
-void nrf_write_tx_addr(uint8_t * tx_addr);
+void nrf_write_tx_addr(uint8_t * address);
 
 /**
  * @brief Reads the nRF FIFO Status register

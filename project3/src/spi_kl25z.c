@@ -15,10 +15,11 @@
 #include "logger.h"
 #include "platform.h"
 #include "spi.h"
+#include "timer.h"
 
 #define SPI_PRESCALE (0)  /* 1x */
-//#define SPI_DIVIDER (1) /* 2^2 = 4x */
-#define SPI_DIVIDER (2) /* 2^2 = 8x --> 3MHz*/
+#define SPI_DIVIDER (1) /* 2^2 = 4x --> 6MHz */
+//#define SPI_DIVIDER (2) /* 2^2 = 8x --> 3MHz*/
 #define SPI_CLOCK ( BUS_CLOCK / ((SPI_PRESCALE+1) * (1 << (SPI_DIVIDER+1))) )  /* Ref: p677 */
 
 void spi_init(void)
@@ -71,7 +72,7 @@ void spi_write_byte(uint8_t byte)
   spi_flush();
   SPI0->D = byte;
   // FIXME: why do we need this delay to get nRF status?
-  for(int i=0; i<10; i++);
+  delay_us(1);
   //log_val(byte, " SPI -->");
 }
 
@@ -83,8 +84,17 @@ void spi_send_packet(uint8_t *p, size_t length)
     SPI0->D = *p++;
   }
   // FIXME: why do we need this delay to get nRF status?
-  for(int i=0; i<20; i++);
+  delay_us(1);
 }
+
+void spi_receive_packet(uint8_t *p, size_t length, uint8_t nop)
+{
+  while( length-- > 0) {
+    spi_write_byte(nop);
+    spi_read_byte(p++);
+  }
+}
+
 
 void spi_flush(void)
 {

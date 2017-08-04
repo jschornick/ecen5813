@@ -37,6 +37,14 @@ void spi_send_packet(uint8_t *p, size_t length)
   }
 }
 
+void spi_receive_packet(uint8_t *p, size_t length, uint8_t nop)
+{
+  log_info("Fake SPI RX packet");
+  while( length-- > 0) {
+    *p++ = 0xab;
+  }
+}
+
 void spi_flush(void)
 {
 }

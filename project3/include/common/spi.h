@@ -56,6 +56,19 @@ void spi_write_byte(uint8_t byte);
 void spi_send_packet(uint8_t *p, size_t length);
 
 /**
+ * @brief Receive a number of bytes out the SPI bus
+ *
+ * Receives `length` bytes from the SPI bus and stores the data ad the address
+ * pointed to to by `p`.
+ *
+ * @param[out] p       Points the the array of bytes to store the received bytes
+ * @param[in]  length The number of bytes to read
+ * @param[in]  nop    The SPI NOP to send to clock reads
+ * @return Nothing returned.
+ **/
+void spi_receive_packet(uint8_t *p, size_t length, uint8_t nop);
+
+/**
  * @brief Blocks until the SPI transmission is complete
  *
  * Blocks until the SPI transmit queue is empty and the transmitter has send the
