@@ -39,6 +39,8 @@ void print_n(uint8_t *str, size_t len);
 
 void print_bytes(uint8_t *data, size_t len);
 
+void print_int(int32_t val);
+
 size_t read_str(uint8_t *str, size_t maxlen);
 
 /**
@@ -53,11 +55,12 @@ size_t read_str(uint8_t *str, size_t maxlen);
  **/
 void printchar(uint8_t chr);
 
+
 /**
- * @brief Produce a heartbeat indicator
+ * @brief Flush the I/O device
  *
  * @return Nothing returned
  **/
-void heartbeat(void);
+void io_flush(void);
 
 #endif /* __IO_H__ */

@@ -121,6 +121,13 @@ UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes);
 size_t UART_queued_rx();
 
 /**
+ * @brief Flush the UART RX/TX queues
+ *
+ * @return Nothing returned
+ **/
+void UART_flush(void);
+
+/**
  * @brief Interrupt handler called on UART transmit/receive
  *
  * Interrupt handler call on UART transmit/receive

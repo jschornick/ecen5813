@@ -60,7 +60,7 @@ void log_queue_initialize(void **state)
 void log_queue_handles_null(void **state)
 {
   Log_q lq;
-  Log_t x = {LOGGER_INITIALIZED, 1234, 0, NULL};
+  Log_t x = {LOGGER_INITIALIZED, 1234, 0, 0, NULL};
 
   /* Check that we can handle NULL Log_q pointers. Any null parameter should
      result in a status of LQ_NULL. */
@@ -143,7 +143,7 @@ void log_queue_add_remove_with_data(void **state)
 void log_queue_wrap_header(void **state)
 {
   Log_q lq;
-  size_t size = 32;
+  size_t size = sizeof(Log_t) + 20;
   Log_t item_msg;
   Log_t item_empty;
   Log_t item_tmp;

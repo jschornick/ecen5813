@@ -16,18 +16,19 @@
 
 typedef enum
 {
-  LOGGER_INITIALIZED,
+  LOGGER_INITIALIZED = 0x11,
   SYSTEM_INITIALIZED,
   SYSTEM_HALTED,
   GPIO_INITIALIZED,
   SPI_INITIALIZED,
-  INFO,
+  INFO = 0x22,
   WARNING,
   ERROR,
   LABELED_VALUE,
-  PROFILING_STARTED,
+  PROFILING_STARTED = 0x33,
   PROFILING_COMPLETED,
   PROFILING_RESULT,
+  NRF_ADDRESS,
   DATA_RECEIVED,
   DATA_ANALYSIS_STARTED ,
   DATA_ANALYSIS_COMPLETED,
@@ -41,10 +42,14 @@ typedef enum
 typedef struct
 {
   Log_id_t id;    /* log type */
-  uint32_t time;  /* timestamp */
+  uint32_t time;    /* time in seconds */
+  uint32_t ms;    /* time in ms */
   size_t length;  /* length of data */
   uint8_t *data;  /* log data of `length` bytes */
 } Log_t;
+
+/* TODO: Does this handle all alignment padding isuuse? Equals 16, not 12!  */
+#define LOG_HEADER_SIZE (sizeof(Log_t) - sizeof(uint8_t *))
 
 /* TODO: volatile? */
 typedef struct
@@ -66,10 +71,6 @@ typedef enum
   LQ_FULL,      /* Buffer is full */
   LQ_EMPTY      /* Buffer is empty */
 } Log_status_t;
-
-/* TODO: Does this handle all alignment padding isuuse? Equals 16, not 12!  */
-#define LOG_HEADER_SIZE (sizeof(Log_t) - sizeof(uint8_t *))
-//#define LOG_META_SIZE (sizeof(Log_t.id) + sizeof(Log_t.time) + sizeof(Log_t.length))
 
 
 /**
@@ -130,7 +131,6 @@ Log_status_t lq_add(Log_q *queue, Log_t *item);
  * @return Returns LQ_OK if item is successfully added, otherwise and error status
  **/
 Log_status_t lq_remove(Log_q *queue, Log_t *item);
-
 
 /**
  * @brief Check if the circular buffer is empty

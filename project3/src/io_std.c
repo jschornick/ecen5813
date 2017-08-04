@@ -17,7 +17,12 @@ void print_str(uint8_t *str)
 
 void print_n(uint8_t *str, size_t len)
 {
-  printf("%.*s", (int) len, str);
+  fwrite(str, 1, len, stdout);
+}
+
+void print_int(int32_t val)
+{
+  printf( "%d", val);
 }
 
 void print_bytes(uint8_t *data, size_t len)
@@ -36,4 +41,9 @@ size_t read_str(uint8_t *str, size_t maxlen)
 void printchar(uint8_t chr)
 {
   putchar(chr);
+}
+
+void io_flush(void)
+{
+  fflush(stdout);
 }

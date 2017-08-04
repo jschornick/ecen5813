@@ -24,6 +24,14 @@ void print_str(uint8_t *str)
   UART_send_n(str, i);
 }
 
+void print_int(int32_t val)
+{
+  uint8_t str[ITOA_MAX_CHARS];
+  uint8_t len;
+  len = my_itoa(val, str, BASE_10);
+  print_n(str, len-1);
+}
+
 void print_n(uint8_t *str, size_t len)
 {
   UART_send_n(str, len);
@@ -57,3 +65,7 @@ void printchar(uint8_t chr)
   UART_send(chr);
 }
 
+void io_flush(void)
+{
+  UART_flush();
+}

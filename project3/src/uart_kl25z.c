@@ -146,6 +146,12 @@ size_t UART_queued_rx()
   return rxbuf.count;
 }
 
+void UART_flush()
+{
+  // The current implemenation blocks on send and receive, so nothing to do
+  return;
+}
+
 void UART0_IRQHandler(void)
 {
   __disable_irq();

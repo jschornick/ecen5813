@@ -46,7 +46,7 @@ EXE = $(TARGET)_$(PLATFORM).elf
 
 # Project flags, interpretted by the preprocessor
 PROJFLAGS = -DPROJECT3
-PROJFLAGS += -DVERBOSE
+#PROJFLAGS += -DLOG_OUT_BINARY
 
 # Use DMA on the KL25Z
 KL25Z_USE_DMA=1
