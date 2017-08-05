@@ -83,6 +83,17 @@ debug:
 	@echo Debug only supported for KL25Z
 endif
 
+.PHONY: upload
+ifeq ($(PLATFORM), BBB)
+upload: $(EXE)
+	@echo Uploading binary to BBB
+	@echo -----------------------
+	@rsync -v --progress $(EXE) bb:
+else
+upload:
+	@echo Upload only supported for BBB
+endif
+
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
