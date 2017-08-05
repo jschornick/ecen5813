@@ -38,7 +38,12 @@ else ifeq ($(PLATFORM),KL25Z)
   PLATFORM_SRCS += spi_kl25z.c
   PLATFORM_SRCS += system_MKL25Z4.c
   PLATFORM_SRCS += timer_kl25z.c
-  PLATFORM_SRCS += uart_kl25z.c
+  ifdef KL25Z_UART_BLOCKING
+    PLATFORM_SRCS += uart_kl25z_blocking.c
+  else
+    PLATFORM_SRCS += uart_kl25z_queued.c
+    #PLATFORM_SRCS += uart_kl25z_dma.c
+  endif
   ASM_SRCS += startup_MKL25Z4.S
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)

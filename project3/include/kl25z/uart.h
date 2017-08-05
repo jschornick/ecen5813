@@ -19,7 +19,8 @@
 /* The target baud rate. A clock divisor will be calculated to best approximate
    this baud rate. With a 48MHz core clock (24MHz UART0 clock), 115.2k is a
    stable baud rate. */
-#define UART0_BAUD_RATE (115200)
+//#define UART0_BAUD_RATE (115200)
+#define UART0_BAUD_RATE (57600)
 
 /* The oversampling rate (OSR) that will be used on the receiver (4x-16x).
    Lowering this value will reduce receiver accuracy, but may allow better

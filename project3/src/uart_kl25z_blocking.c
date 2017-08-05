@@ -1,6 +1,6 @@
 /**
- * @file uart.c
- * @brief UART function definitions
+ * @file uart_kl25z_blocking.c
+ * @brief UART functions implemented in blocking fashion
  *
  * Functions for initializing, configuring, and sending/receiving via a
  * UART device.
@@ -13,7 +13,6 @@
 #include "core_cm0plus.h"
 #include "led.h"
 #include "uart.h"
-#include "circular_buffer.h"
 
 /* Circular buffers used to queue Rx/Tx data for the UART */
 CircBuf_t rxbuf;
@@ -70,52 +69,26 @@ UART_status_t UART_configure()
   UART0->C2 |= UART0_C2_RE(1); // 1 = RX enable
   UART0->C2 |= UART0_C2_TE(1); // 1 = TX enable
 
-  // Enable UART RX/TX interrupts
-  //  see ch39: interrupts and status flags, p745
-  UART0->C2 |= UART0_C2_RIE(1);  // Interrupt on RDRF (Rx data ready)
-  UART0->C2 |= UART0_C2_TIE(1);  // Interrupt on TDRE (Tx register ready)
-  UART0->C2 &= ~(UART0_C2_TCIE_MASK); // NO interrtupt on TC=1
-
-  // Initialize the Rx/Tx circular buffers before first use
-  CB_init(&rxbuf, UART_BUF_SIZE);
-  CB_init(&txbuf, UART_BUF_SIZE);
-
-  // Allow UART0 interrupt the CPU
-  //  (see: core_cm0plus.h, MKL25Z4.h)
-  NVIC_ClearPendingIRQ(UART0_IRQn);
-  NVIC_EnableIRQ(UART0_IRQn);
+  // Blocking confiugration, no UART RX/TX interrupts
 
   return UART_OK;
 }
 
 UART_status_t UART_send(uint8_t data)
 {
-  /* Wait until we successfully queue the data */
-  while( CB_add_item(&txbuf, data) != CB_OK );
-  /* Kick the interrupt handler, which will either process the transmission
-     immediately or refire when it is ready */
-  NVIC_SetPendingIRQ(UART0_IRQn);
-  /* Block until the requested byte has been sent. Unnecessary, but required by
-     the project specification. */
-  while(!CB_is_empty(&txbuf)) {};
+  while( !(UART0->S1 & UART0_S1_TDRE_MASK) ) {};
+  UART0->D = data;
 
   return UART_OK;
 }
 
 UART_status_t UART_send_n(uint8_t *data, size_t num_bytes)
 {
-  /* Ensure all bytes are placed on the TX queue */
   while( num_bytes > 0 ) {
-    if( CB_add_item(&txbuf, *data) == CB_OK) {
-      data++;
-      num_bytes--;
-    }
+    while( !(UART0->S1 & UART0_S1_TDRE_MASK)) {};
+    UART0->D = *data++;
+    num_bytes--;
   }
-  /* Kick the interrupt handler to start the transmission */
-  NVIC_SetPendingIRQ(UART0_IRQn);
-  /* Block until all the requested bytes have been sent. This is unnecessary but
-     required by the project specification. */
-  while(!CB_is_empty(&txbuf)) {};
 
   return UART_OK;
 }
@@ -143,12 +116,12 @@ UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes)
 
 size_t UART_queued_rx()
 {
-  return rxbuf.count;
+  return -1;
 }
 
 void UART_flush()
 {
-  // The current implemenation blocks on send and receive, so nothing to do
+  while(!CB_is_empty(&txbuf)) {};
   return;
 }
 
@@ -167,7 +140,7 @@ void UART0_IRQHandler(void)
       UART0->C2 &= ~(UART0_C2_TE_MASK); // TX disable
       UART0->D = item;
       UART0->C2 |= UART0_C2_TE(1); // 1 = TX enable
-      }
+    }
   }
 
   if(UART0->S1 & UART0_S1_RDRF_MASK) {
