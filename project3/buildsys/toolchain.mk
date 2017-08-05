@@ -18,13 +18,15 @@ LDFLAGS = -Wl,-Map=$(MAPFILE)
 ifeq ($(PLATFORM),HOST)
   TOOLCHAIN =
   # Enable POSIX timing functionality
-  CPPFLAGS += -D_DEFAULT_SOURCE
   INCFLAGS += -I$(INC_DIR)/linux
+  CFLAGS += -std=gnu99
 else ifeq ($(PLATFORM),BBB)
   TOOLCHAIN = arm-linux-gnueabihf-
   # Enable POSIX timing functionality
   CPPFLAGS += -D_DEFAULT_SOURCE
   INCFLAGS += -I$(INC_DIR)/linux
+  CFLAGS += -std=gnu99
+  LDLAGS += -lrt
 else ifeq ($(PLATFORM),KL25Z)
   TOOLCHAIN = arm-none-eabi-
   # Disable standard I/O functions (printf, etc), enable HW peripherals
