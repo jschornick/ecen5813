@@ -22,5 +22,5 @@ void profile_calibrate() {
   start_time = get_usecs();
   end_time = get_usecs();
   profile_overhead = end_time - start_time;
-  log_val(INFO, profile_overhead, "Profile overhead");
+  LOG_VAL(INFO, profile_overhead, "Profile overhead");
 }

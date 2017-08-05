@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void print_str(uint8_t *str)
+void print_str(const char *str)
 {
   printf( "%s", str);
 }
@@ -25,6 +25,11 @@ void print_int(int32_t val)
   printf( "%d", val);
 }
 
+void print_int_pad(int32_t val, uint8_t padsize)
+{
+  printf( "%*d", padsize, val);
+}
+
 void print_bytes(uint8_t *data, size_t len)
 {
   for(;len>0; len--) {
@@ -32,9 +37,9 @@ void print_bytes(uint8_t *data, size_t len)
   }
 }
 
-size_t read_str(uint8_t *str, size_t maxlen)
+size_t read_str(char *str, size_t maxlen)
 {
-  return strlen( (char*) fgets((char*) str, maxlen, stdin));
+  return strlen( fgets(str, maxlen, stdin));
 }
 
 void printchar(uint8_t chr)

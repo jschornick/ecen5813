@@ -82,7 +82,7 @@ UART_status_t UART_send(uint8_t data);
  * @param[in] num_bytes The number of bytes to send
  * @return Returns UART_OK after all provided data has been sent
  **/
-UART_status_t UART_send_n(uint8_t *data, size_t num_bytes);
+UART_status_t UART_send_n(const uint8_t *data, size_t num_bytes);
 
 /**
  * @brief Receive a single byte from the UART device

@@ -83,7 +83,7 @@ void TPM0_IRQHandler(void)
   {
     if( (timer_counter % 10 ) == 0) {
       led_toggle(GREEN_LED);
-      log_id(HEARTBEAT);
+      LOG_ID(HEARTBEAT);
     }
     // Write 1 to TOF to clear flag
     TPM0->SC |= TPM_SC_TOF_MASK;

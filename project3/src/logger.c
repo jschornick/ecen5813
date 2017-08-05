@@ -21,14 +21,6 @@
 Log_q system_log;
 uint32_t log_epoch;
 
-/* init the logging system? */
-void logging_init()
-{
-  log_epoch = get_time();
-  lq_init(&system_log, SYSTEM_LOG_SIZE);
-  log_id( LOGGER_INITIALIZED );
-}
-
 /* ** RAW LOGGING **/
 
 void log_raw_data(uint8_t *data, size_t length)
@@ -36,7 +28,7 @@ void log_raw_data(uint8_t *data, size_t length)
   print_bytes(data, length);
 }
 
-void log_raw_string(uint8_t *str)
+void log_raw_string(const char *str)
 {
   print_str(str);
 }
@@ -70,9 +62,9 @@ void log_data(Log_id_t id, void *data, size_t length)
   logx(id, LD_DATA, data, length);
 }
 
-void log_str(Log_id_t id, char *str)
+void log_str(Log_id_t id, const char *str)
 {
-  logx(id, LD_STR, str, strlen(str) + 1);
+  logx(id, LD_STR, (void *) str, strlen(str) + 1);
 }
 
 void log_int(Log_id_t id, int32_t val)
@@ -99,9 +91,9 @@ void log_id(Log_id_t id)
   logx(id, LD_NULL, NULL, 0);
 }
 
-void log_info(char *str)
+void log_info(const char *str)
 {
-  logx(INFO, LD_STR, str, strlen(str) + 1);
+  logx(INFO, LD_STR, (void *) str, strlen(str) + 1);
 }
 
 void log_flush(void)
@@ -127,8 +119,8 @@ const char *log_id_str[] =
     "INFO",
     "WARNING",
     "ERROR",
-    "PROFILING_STARTED",
-    "PROFILING_COMPLETED",
+    "PROFILING_START",
+    "PROFILING_DONE",
     "PROFILING_RESULT",
     "NRF_ADDRESS",
     "DATA_RECEIVED",
@@ -145,9 +137,9 @@ const char *log_id_str[] =
 void log_send_ascii(Log_t *log)
 {
   print_int(log->time);
-  print_str( (uint8_t *) " [");
-  print_str( (uint8_t *) log_id_str[log->id] );
-  print_str( (uint8_t *) "] ");
+  print_str(" [");
+  print_str( log_id_str[log->id] );
+  print_str("] ");
   switch(log->type) {
     case LD_NULL:
       break;
@@ -155,11 +147,11 @@ void log_send_ascii(Log_t *log)
       print_int( *(log->data) );
       break;
     case LD_STR:
-      print_str( log->data );
+      print_str( (char *) log->data );
       break;
     case LD_NVAL:
-      print_str(log->data+4);
-      print_str( (uint8_t *) " = ");
+      print_str( (char *) log->data+4);
+      print_str(" = ");
       print_int(*((uint32_t *) log->data));
       break;
     case LD_DATA:
@@ -172,7 +164,7 @@ void log_send_ascii(Log_t *log)
       }
       break;
   }
-  print_str( (uint8_t *) "\n");
+  print_str("\n");
 }
 
 void log_send_binary(Log_t *log)
@@ -180,4 +172,12 @@ void log_send_binary(Log_t *log)
   //TODO: replace this with a direct dump of the entire log queue buffer
   print_n((uint8_t *) log, LOG_HEADER_SIZE);
   print_n(log->data, log->length);
+}
+
+/* init the logging system? */
+void logging_init()
+{
+  log_epoch = get_time();
+  lq_init(&system_log, SYSTEM_LOG_SIZE);
+  log_id( LOGGER_INITIALIZED );
 }

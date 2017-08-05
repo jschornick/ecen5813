@@ -16,14 +16,13 @@
 
 #include "logger.h"
 
-/* TODO: volatile? */
 typedef struct
 {
-  uint8_t *buffer; /* The address of the data buffer allocation */
-  uint8_t *head;   /* Points to the latest log item */
-  uint8_t *tail;   /* Points to the the first log item */
+  volatile uint8_t *buffer; /* The address of the data buffer allocation */
+  volatile uint8_t *head;   /* Points to the latest log item */
+  volatile uint8_t *tail;   /* Points to the the first log item */
   size_t size;     /* Total amount of log data (bytes) */
-  size_t free;     /* Number of free bytes in the queue */
+  volatile size_t free;     /* Number of free bytes in the queue */
 } Log_q;
 
 typedef enum

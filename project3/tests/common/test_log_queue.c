@@ -60,7 +60,7 @@ void log_queue_initialize(void **state)
 void log_queue_handles_null(void **state)
 {
   Log_q lq;
-  Log_t x = {LOGGER_INITIALIZED, 1234, 0, 0, NULL};
+  Log_t x = {LOGGER_INITIALIZED, LD_NULL, 1234, 0, 0, NULL};
 
   /* Check that we can handle NULL Log_q pointers. Any null parameter should
      result in a status of LQ_NULL. */

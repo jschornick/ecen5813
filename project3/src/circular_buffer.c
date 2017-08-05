@@ -10,8 +10,8 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "circular_buffer.h"
 #include "platform.h"
+#include "circular_buffer.h"
 
 CB_status_t CB_init(CircBuf_t *circbuf, size_t size)
 {
@@ -63,14 +63,14 @@ CB_status_t CB_add_item(CircBuf_t *circbuf, uint8_t item)
      to guarantee consistency when the circular buffer is modified and accessed
      simultaneously both in and out of interrupt. */
 
-  critical_start();
+  START_CRITICAL();
   if( ++(circbuf->head) == (circbuf->buffer + circbuf->size) )
   {
     circbuf->head = circbuf->buffer;
   }
   *(circbuf->head) = item;
   circbuf->count++;
-  critical_end();
+  END_CRITICAL();
 
   return CB_OK;
 }
@@ -91,14 +91,14 @@ CB_status_t CB_remove_item(CircBuf_t *circbuf, uint8_t *item)
      guarantee consistency when the circular buffer is modified and accessed
      simultaneously both in and out of interrupt. */
 
-  critical_start();
+  START_CRITICAL();
   if( ++(circbuf->tail) == (circbuf->buffer + circbuf->size) )
   {
     circbuf->tail = circbuf->buffer;
   }
   *item = *(circbuf->tail);
   circbuf->count--;
-  critical_end();
+  END_CRITICAL();
 
   return CB_OK;
 }
@@ -146,7 +146,7 @@ CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item)
      interrupt. */
 
   /* Find the peeked item, but wrap around if necessary */
-  critical_start();
+  START_CRITICAL();
   if( circbuf->head - position >= circbuf->buffer )
   {
     *item = *(circbuf->head - position);
@@ -155,7 +155,7 @@ CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item)
   {
     *item = *((circbuf->head - position) + circbuf->size);
   }
-  critical_end();
+  END_CRITICAL();
 
   return CB_OK;
 }

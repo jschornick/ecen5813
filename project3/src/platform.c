@@ -24,8 +24,6 @@
 #include "spi.h"
 #include "gpio.h"
 
-#include "MKL25Z4.h"
-
 void platform_init(void) {
 
   led_setup();
@@ -36,17 +34,17 @@ void platform_init(void) {
   dma_setup();
 
   UART_configure();
-  UART_send_n( (uint8_t *) "\r\n** FRDM-KL25Z Reset **\r\n", 26);
+  UART_send_n( (uint8_t *) "\n** FRDM-KL25Z Reset **\n\n", 26);
 
-  logging_init();
+  LOGGING_INIT();
 
   gpio_spi_init();
   gpio_nrf_init();
 
   spi_init();
 
-  log_id(SYSTEM_INITIALIZED);
-  log_flush();
+  LOG_ID(SYSTEM_INITIALIZED);
+  LOG_FLUSH();
 }
 
 uint32_t critical_primask = 0;
@@ -54,9 +52,9 @@ uint32_t critical_primask = 0;
 #else
 
 void platform_init(void) {
- logging_init();
- log_id(SYSTEM_INITIALIZED);
- log_flush();
+ LOGGING_INIT();
+ LOG_ID(SYSTEM_INITIALIZED);
+ LOG_FLUSH();
 }
 
 #endif

@@ -13,7 +13,7 @@
 #include "io.h"
 
 /* Send null-terminated string to output */
-void print_str(uint8_t *str)
+void print_str(const char *str)
 {
   size_t i = 0 ;
   /* Find position of null terminator */
@@ -21,7 +21,7 @@ void print_str(uint8_t *str)
   {
     i++;
   };
-  UART_send_n(str, i);
+  UART_send_n( (uint8_t *) str, i);
 }
 
 void print_int(int32_t val)
@@ -30,6 +30,17 @@ void print_int(int32_t val)
   uint8_t len;
   len = my_itoa(val, str, BASE_10);
   print_n(str, len-1);
+}
+
+void print_int_pad(int32_t val, uint8_t padsize)
+{
+  uint8_t str[ITOA_MAX_CHARS];
+  uint8_t len;
+  len = my_itoa(val, str, BASE_10) - 1;
+  for(int8_t i=0; i<(padsize - len); i++) {
+    printchar(' ');
+  }
+  print_n(str, len);
 }
 
 void print_n(uint8_t *str, size_t len)
@@ -50,12 +61,12 @@ void print_bytes(uint8_t *data, size_t len)
   }
 }
 
-size_t read_str(uint8_t *str, size_t maxlen)
+size_t read_str(char *str, size_t maxlen)
 {
   size_t to_read;
   size_t avail = UART_queued_rx();
   to_read = (maxlen-1 <= avail) ? maxlen-1 : avail;
-  UART_receive_n(str, to_read);
+  UART_receive_n( (uint8_t *) str, to_read);
   *(str+to_read) = '\0';
   return to_read;
 }

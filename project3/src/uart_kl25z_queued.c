@@ -99,7 +99,7 @@ UART_status_t UART_send(uint8_t data)
   return UART_OK;
 }
 
-UART_status_t UART_send_n(uint8_t *data, size_t num_bytes)
+UART_status_t UART_send_n(const uint8_t *data, size_t num_bytes)
 {
   /* Ensure all bytes are placed on the TX queue */
   while( num_bytes > 0 ) {

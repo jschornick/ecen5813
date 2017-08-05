@@ -90,11 +90,7 @@ extern uint32_t critical_primask;
  *
  * @return Nothing returned
  **/
-static inline void critical_start(void)
-{
-  critical_primask = __get_PRIMASK();
-  __disable_irq();
-}
+#define START_CRITICAL() critical_primask = __get_PRIMASK(); __disable_irq();
 
 /**
  * @brief Finish critical section
@@ -104,18 +100,14 @@ static inline void critical_start(void)
  *
  * @return Nothing returned
  **/
-static inline void critical_end(void)
-{
-  if(!critical_primask) {
-    __enable_irq();
-  }
-}
+#define END_CRITICAL() if(!critical_primask) { __enable_irq(); }
+
 
 #else /* HOST/BBB */
 
 /* Interrupts not used on platform */
-#define critical_start()
-#define critical_end()
+#define START_CRITICAL()
+#define END_CRITICAL()
 
 #define PORT_Type char
 #define GPIO_Type char

@@ -53,7 +53,7 @@ void spi_init(void)
   // Enable the SPI device
   SPI0->C1 |= SPI_C1_SPE(1);
 
-  log_val(SPI_INITIALIZED, SPI_CLOCK, "SPI0_CLK");
+  LOG_VAL(SPI_INITIALIZED, SPI_CLOCK, "SPI0_CLK");
 }
 
 void spi_read_byte(uint8_t *byte)
@@ -61,7 +61,7 @@ void spi_read_byte(uint8_t *byte)
   // Wait for SPI0_S->SPRF=1 (RX full)
   while( !(SPI0->S & SPI_S_SPRF_MASK) ) {};
   *byte = SPI0->D;
-  //log_val(*byte, " SPI <--");
+  //LOG_VAL(*byte, " SPI <--");
 }
 
 void spi_write_byte(uint8_t byte)
@@ -72,14 +72,14 @@ void spi_write_byte(uint8_t byte)
   SPI0->D = byte;
   // FIXME: why do we need this delay to get nRF status?
   delay_us(1);
-  //log_val(byte, " SPI -->");
+  //LOG_VAL(byte, " SPI -->");
 }
 
 void spi_send_packet(uint8_t *p, size_t length)
 {
   while( length-- > 0) {
     spi_flush();
-    //log_val(*p, " SPI -->");
+    //LOG_VAL(*p, " SPI -->");
     SPI0->D = *p++;
   }
   // FIXME: why do we need this delay to get nRF status?

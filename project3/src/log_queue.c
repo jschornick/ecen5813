@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include "memory.h"
+#include "platform.h"
 #include "logger.h"
 #include "log_queue.h"
 
@@ -43,7 +44,7 @@ Log_status_t lq_destroy(Log_q *queue)
     return LQ_NULL;
   }
 
-  free(queue->buffer);
+  free((void *) queue->buffer);
   queue->buffer = NULL;
   queue->size = 0;
   queue->free = 0;
@@ -58,15 +59,15 @@ void lq_add_bytes(Log_q *queue, uint8_t *bytes, size_t length)
   if( contiguous < length )  /* wrap required */
   {
     // First copy the data which fits up to the end of the buffer
-    my_memcpy( bytes, queue->head, contiguous );
+    my_memcpy( bytes, (uint8_t *) queue->head, contiguous );
     // Then copy the remainer at the beginning
-    my_memcpy( &bytes[contiguous], queue->buffer, (length - contiguous) );
+    my_memcpy( &bytes[contiguous], (uint8_t *) queue->buffer, (length - contiguous) );
     // Offset head to reflect wrap
     queue->head = queue->buffer + (length - contiguous);
   }
   else /* all bytes fit without wrapping*/
   {
-    my_memcpy( bytes, queue->head, length);
+    my_memcpy( bytes, (uint8_t *) queue->head, length);
     queue->head += length;
   }
 
@@ -84,8 +85,10 @@ Log_status_t lq_add(Log_q *queue, Log_t *item)
     return LQ_FULL;
   }
 
+  START_CRITICAL();
   lq_add_bytes(queue, (uint8_t *) item, LOG_HEADER_SIZE);
   lq_add_bytes(queue, item->data, item->length);
+  END_CRITICAL();
 
   return LQ_OK;
 }
@@ -98,15 +101,15 @@ void lq_remove_bytes(Log_q *queue, uint8_t *bytes, size_t length)
   if( contiguous < length )  /* wrap required */
   {
     // First copy the data which fits up to the end of the buffer
-    my_memcpy( queue->tail, bytes, contiguous );
+    my_memcpy( (uint8_t *) queue->tail, bytes, contiguous );
     // Then copy the remainer at the beginning
-    my_memcpy( queue->buffer, &bytes[contiguous], (length - contiguous) );
+    my_memcpy( (uint8_t *) queue->buffer, &bytes[contiguous], (length - contiguous) );
     // Offset tail to reflect wrap
     queue->tail = queue->buffer + (length - contiguous);
   }
   else /* all bytes fit without wrapping*/
   {
-    my_memcpy( queue->tail, bytes, length );
+    my_memcpy( (uint8_t *) queue->tail, bytes, length );
     queue->tail += length;
   }
   queue->free += length;
@@ -132,14 +135,17 @@ Log_status_t lq_remove(Log_q *queue, Log_t *item)
   }
 
   size_t max_data = item->length;  /* save so we don't copy in too much data */
+  size_t copy_size;
 
+  START_CRITICAL();
   /* read header */
   lq_remove_bytes(queue, (uint8_t *) item, LOG_HEADER_SIZE);
-
+  copy_size = (max_data < item->length) ? max_data : item->length;
   /* read data */
-  size_t copy_size = (max_data < item->length) ? max_data : item->length;
   lq_remove_bytes(queue, item->data, copy_size);
   lq_drop_bytes(queue, item->length - copy_size);
+  END_CRITICAL();
+
   item->length = copy_size;
 
   return LQ_OK;

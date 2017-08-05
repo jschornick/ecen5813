@@ -53,7 +53,7 @@ void gpio_spi_init(void)
   set_mux_mode(SPI_PORT, SPI_MOSI_PIN, SPI_ALT_MUX_MODE);
   set_mux_mode(SPI_PORT, SPI_MISO_PIN, SPI_ALT_MUX_MODE);
 
-  log_str(GPIO_INITIALIZED, "SPI pins");
+  LOG_STR(GPIO_INITIALIZED, "SPI pins");
 }
 
 void gpio_nrf_init(void)
@@ -71,6 +71,6 @@ void gpio_nrf_init(void)
   NRF_CE_GPIO->PDDR |= (1<<NRF_CE_PIN);  /* 1 -> output mode */
   gpio_high(NRF_CE);  // High = disabled (active low)
 
-  log_str(GPIO_INITIALIZED, "NRF pins");
+  LOG_STR(GPIO_INITIALIZED, "NRF pins");
 }
 

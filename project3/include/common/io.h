@@ -22,7 +22,7 @@
  * @param[in] str The string to output
  * @return Nothing returned
  **/
-void print_str(uint8_t *str);
+void print_str(const char *str);
 
 /**
 * @brief Print a character array of specified length to the output device
@@ -41,7 +41,9 @@ void print_bytes(uint8_t *data, size_t len);
 
 void print_int(int32_t val);
 
-size_t read_str(uint8_t *str, size_t maxlen);
+void print_int_pad(int32_t val, uint8_t padsize);
+
+size_t read_str(char *str, size_t maxlen);
 
 /**
  * @brief Send a character to the output device

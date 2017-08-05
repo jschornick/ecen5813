@@ -15,12 +15,12 @@
 
 inline void gpio_high(GPIO_Type *gpio, uint8_t pin)
 {
-  log_val(INFO, 1,gpio);
+  LOG_VAL(INFO, 1,gpio);
 }
 
 inline void gpio_low(GPIO_Type *gpio, uint8_t pin)
 {
-  log_val(INFO, 0, gpio);
+  LOG_VAL(INFO, 0, gpio);
 }
 
 void gpio_spi_init(void)

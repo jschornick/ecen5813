@@ -69,29 +69,53 @@ typedef struct
 
 
 void log_raw_data(uint8_t *data, size_t length);
-
-void log_raw_string(uint8_t *str);
-
+void log_raw_string(const char *str);
 void log_raw_int(int32_t val);
+
+#ifdef DISABLE_LOG
+#define LOG_RAW_DATA(...)
+#define LOG_RAW_STRING(...)
+#define LOG_RAW_INT(...)
+#else
+#define LOG_RAW_DATA log_raw_data
+#define LOG_RAW_STRING log_raw_string
+#define LOG_RAW_INT log_raw_int
+#endif
 
 
 /* Non-blocking logger functions */
 
-/* init the logging system? */
 void logging_init();
-
 void log_item(Log_t *item);
-
 void log_data(Log_id_t id, void *data, size_t length);
-
 void log_id(Log_id_t id);
-void log_str(Log_id_t id, char *str);
+void log_str(Log_id_t id, const char *str);
 void log_int(Log_id_t id, int32_t val);
 void log_val(Log_id_t, int32_t val, char *name);
-
-void log_info(char *str);
-
+void log_info(const char *str);
 void log_flush(void);
+
+#ifdef DISABLE_LOG
+#define LOGGING_INIT()
+#define LOG_ITEM(...)
+#define LOG_DATA(...)
+#define LOG_ID(...)
+#define LOG_STR(...)
+#define LOG_INT(...)
+#define LOG_VAL(...)
+#define LOG_INFO(...)
+#define LOG_FLUSH(...)
+#else
+#define LOGGING_INIT logging_init
+#define LOG_ITEM log_item
+#define LOG_DATA log_data
+#define LOG_ID log_id
+#define LOG_STR log_str
+#define LOG_INT log_int
+#define LOG_VAL log_val
+#define LOG_INFO log_info
+#define LOG_FLUSH log_flush
+#endif
 
 
 /* output */
