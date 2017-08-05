@@ -44,7 +44,7 @@ void platform_init(void) {
   gpio_nrf_init();
   spi_init() ;
 
-  log_msg(SYSTEM_INITIALIZED, NULL, 0);
+  log_id(SYSTEM_INITIALIZED);
   log_flush();
 }
 
@@ -54,7 +54,7 @@ uint32_t critical_primask = 0;
 
 void platform_init(void) {
  logging_init();
- log_msg(SYSTEM_INITIALIZED, NULL, 0);
+ log_id(SYSTEM_INITIALIZED);
  log_flush();
 }
 

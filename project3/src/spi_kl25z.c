@@ -53,8 +53,7 @@ void spi_init(void)
   // Enable the SPI device
   SPI0->C1 |= SPI_C1_SPE(1);
 
-  log_msg(SPI_INITIALIZED, NULL, 0);
-  log_val(SPI_CLOCK, "SPI0_CLK");
+  log_val(SPI_INITIALIZED, SPI_CLOCK, "SPI0_CLK");
 }
 
 void spi_read_byte(uint8_t *byte)

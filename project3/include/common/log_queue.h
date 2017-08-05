@@ -14,42 +14,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-typedef enum
-{
-  LOGGER_INITIALIZED = 0x11,
-  SYSTEM_INITIALIZED,
-  SYSTEM_HALTED,
-  GPIO_INITIALIZED,
-  SPI_INITIALIZED,
-  INFO = 0x22,
-  WARNING,
-  ERROR,
-  LABELED_VALUE,
-  PROFILING_STARTED = 0x33,
-  PROFILING_COMPLETED,
-  PROFILING_RESULT,
-  NRF_ADDRESS,
-  DATA_RECEIVED,
-  DATA_ANALYSIS_STARTED ,
-  DATA_ANALYSIS_COMPLETED,
-  DATA_ALPHA_COUNT,
-  DATA_NUMERIC_COUNT,
-  DATA_PUNCTUATION_COUNT,
-  DATA_MISC_COUNT,
-  HEARTBEAT
-} Log_id_t;
-
-typedef struct
-{
-  Log_id_t id;    /* log type */
-  uint32_t time;    /* time in seconds */
-  uint32_t ms;    /* time in ms */
-  size_t length;  /* length of data */
-  uint8_t *data;  /* log data of `length` bytes */
-} Log_t;
-
-/* TODO: Does this handle all alignment padding isuuse? Equals 16, not 12!  */
-#define LOG_HEADER_SIZE (sizeof(Log_t) - sizeof(uint8_t *))
+#include "logger.h"
 
 /* TODO: volatile? */
 typedef struct

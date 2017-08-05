@@ -15,7 +15,7 @@
 
 void spi_init(void)
 {
-  log_msg(SPI_INITIALIZED, NULL, 0);
+  log_id(SPI_INITIALIZED);
   log_info("Using fake SPI driver");
 }
 
@@ -27,13 +27,13 @@ void spi_read_byte(uint8_t *byte)
 
 void spi_write_byte(uint8_t byte)
 {
-  log_val(byte, "Fake SPI write");
+  log_val(INFO, byte, "Fake SPI write");
 }
 
 void spi_send_packet(uint8_t *p, size_t length)
 {
   while( length-- > 0) {
-    log_val(*p++, "Fake SPI send");
+    log_val(INFO, *p++, "Fake SPI send");
   }
 }
 

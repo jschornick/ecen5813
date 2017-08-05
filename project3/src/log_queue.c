@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include "memory.h"
+#include "logger.h"
 #include "log_queue.h"
 
 #include <stdio.h>

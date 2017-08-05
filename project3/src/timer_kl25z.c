@@ -92,6 +92,11 @@ uint32_t get_time()
   return timer_counter * TIMER_TARGET_MS + TICKS_TO_MS(elapsed_ticks(timer_ticks));
 }
 
+uint32_t get_usecs()
+{
+  return TICKS_TO_US(elapsed_ticks(timer_ticks));
+}
+
 /* Increment counter and process heartbeat every overflow */
 void TPM0_IRQHandler(void)
 {
@@ -101,7 +106,7 @@ void TPM0_IRQHandler(void)
   {
     if( (timer_counter % 10 ) == 0) {
       led_toggle(GREEN_LED);
-      log_msg(HEARTBEAT, NULL, 0);
+      log_id(HEARTBEAT);
     }
     // Write 1 to TOF to clear flag
     TPM0->SC |= TPM_SC_TOF_MASK;
