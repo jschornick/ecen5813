@@ -42,7 +42,8 @@ void platform_init(void) {
 
   gpio_spi_init();
   gpio_nrf_init();
-  spi_init() ;
+
+  spi_init();
 
   log_id(SYSTEM_INITIALIZED);
   log_flush();

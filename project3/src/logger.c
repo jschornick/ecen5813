@@ -165,7 +165,6 @@ void log_send_ascii(Log_t *log)
     case LD_DATA:
       switch(log->id) {
       case NRF_ADDRESS:
-        print_str( (uint8_t *) "nRF address: ");
         print_bytes((uint8_t *) log->data, 5);
         break;
       default:

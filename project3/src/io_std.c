@@ -34,8 +34,7 @@ void print_bytes(uint8_t *data, size_t len)
 
 size_t read_str(uint8_t *str, size_t maxlen)
 {
-  fgets((char*) str, maxlen, stdin);
-  return strlen( (char*)str);
+  return strlen( (char*) fgets((char*) str, maxlen, stdin));
 }
 
 void printchar(uint8_t chr)

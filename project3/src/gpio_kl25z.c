@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "MKL25Z4.h"
+#include "logger.h"
 #include "gpio.h"
 
 
@@ -51,6 +52,8 @@ void gpio_spi_init(void)
 
   set_mux_mode(SPI_PORT, SPI_MOSI_PIN, SPI_ALT_MUX_MODE);
   set_mux_mode(SPI_PORT, SPI_MISO_PIN, SPI_ALT_MUX_MODE);
+
+  log_str(GPIO_INITIALIZED, "SPI pins");
 }
 
 void gpio_nrf_init(void)
@@ -67,5 +70,7 @@ void gpio_nrf_init(void)
   set_mux_mode(NRF_CE_PORT, NRF_CE_PIN, GPIO_MUX_MODE);
   NRF_CE_GPIO->PDDR |= (1<<NRF_CE_PIN);  /* 1 -> output mode */
   gpio_high(NRF_CE);  // High = disabled (active low)
+
+  log_str(GPIO_INITIALIZED, "NRF pins");
 }
 
