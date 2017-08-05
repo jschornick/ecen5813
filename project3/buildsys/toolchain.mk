@@ -47,7 +47,9 @@ else ifeq ($(PLATFORM),KL25Z)
   # to choose the appropriate C runtime variant (armv6-m).
   LDFLAGS += -march=armv6-m
   LDFLAGS += -mthumb
-  LDFLAGS += -Wl,--defsym=__buffer_size__=$(PROF_BUFFER_SIZE)
+  ifdef PROF_BUFFER_SIZE
+    LDFLAGS += -Wl,--defsym=__buffer_size__=$(PROF_BUFFER_SIZE)
+  endif
   FLASH_SCRIPT = $(PLAT_DIR)/openocd_kl25z_flash.cfg
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)
