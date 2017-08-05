@@ -52,6 +52,7 @@ ENTRY(Reset_Handler)
 
 HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
 STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+BUFFER_SIZE = DEFINED(__buffer_size__) ? __buffer_size__ * 2 : 0x0000;
 
 /* Specify the memory areas */
 MEMORY
@@ -217,6 +218,13 @@ SECTIONS
     __HeapBase = .;
     . += HEAP_SIZE;
     __HeapLimit = .;
+  } > m_data
+
+  .buffer :
+  {
+    . = ALIGN(4);
+    __BUFFER_START = .;
+    . += BUFFER_SIZE;
   } > m_data
 
   .stack :

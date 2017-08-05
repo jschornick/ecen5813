@@ -16,6 +16,8 @@
 
 #define MEM_FAIL 0
 
+#define DMA_AVAILABLE
+
 /**
  * @brief Move a range of bytes from source to destination
  *

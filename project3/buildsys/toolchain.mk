@@ -17,9 +17,14 @@ LDFLAGS = -Wl,-Map=$(MAPFILE)
 # Platform-specific flags
 ifeq ($(PLATFORM),HOST)
   TOOLCHAIN =
-  #CPPFLAGS += -DNO_STDIO
+  # Enable POSIX timing functionality
+  CPPFLAGS += -D_DEFAULT_SOURCE
+  INCFLAGS += -I$(INC_DIR)/linux
 else ifeq ($(PLATFORM),BBB)
   TOOLCHAIN = arm-linux-gnueabihf-
+  # Enable POSIX timing functionality
+  CPPFLAGS += -D_DEFAULT_SOURCE
+  INCFLAGS += -I$(INC_DIR)/linux
 else ifeq ($(PLATFORM),KL25Z)
   TOOLCHAIN = arm-none-eabi-
   # Disable standard I/O functions (printf, etc), enable HW peripherals
@@ -40,6 +45,7 @@ else ifeq ($(PLATFORM),KL25Z)
   # to choose the appropriate C runtime variant (armv6-m).
   LDFLAGS += -march=armv6-m
   LDFLAGS += -mthumb
+  LDFLAGS += -Wl,--defsym=__buffer_size__=$(PROF_BUFFER_SIZE)
   FLASH_SCRIPT = $(PLAT_DIR)/openocd_kl25z_flash.cfg
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)

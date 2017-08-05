@@ -74,29 +74,6 @@ void timer_setup(void)
   NVIC_EnableIRQ(TPM0_IRQn);
 }
 
-void delay_ms(uint32_t ms)
-{
-  ms = (ms > SYSTICK_MAX_MS) ? SYSTICK_MAX_MS : ms;
-  uint32_t start = get_ticks();
-  while( elapsed_ticks(start) < MS_TO_TICKS(ms) ) {};
-}
-
-void delay_us(uint16_t us)
-{
-  uint32_t start = get_ticks();
-  while( elapsed_ticks(start) < US_TO_TICKS(us) ) {};
-}
-
-uint32_t get_time()
-{
-  return timer_counter * TIMER_TARGET_MS + TICKS_TO_MS(elapsed_ticks(timer_ticks));
-}
-
-uint32_t get_usecs()
-{
-  return TICKS_TO_US(elapsed_ticks(timer_ticks));
-}
-
 /* Increment counter and process heartbeat every overflow */
 void TPM0_IRQHandler(void)
 {

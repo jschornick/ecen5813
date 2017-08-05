@@ -125,10 +125,30 @@ extern volatile uint32_t timer_counter;
 **/
 void timer_setup(void);
 
-void delay_ms(uint32_t ms);
 
-void delay_us(uint16_t us);
+extern volatile uint32_t timer_ticks;
 
-uint32_t get_time(void);
+static inline __attribute__((always_inline)) void delay_ms(uint32_t ms)
+{
+  ms = (ms > SYSTICK_MAX_MS) ? SYSTICK_MAX_MS : ms;
+  uint32_t start = get_ticks();
+  while( elapsed_ticks(start) < MS_TO_TICKS(ms) ) {};
+}
+
+static inline __attribute__((always_inline)) void delay_us(uint16_t us)
+{
+  uint32_t start = get_ticks();
+  while( elapsed_ticks(start) < US_TO_TICKS(us) ) {};
+}
+
+static inline __attribute__((always_inline)) uint32_t get_time()
+{
+  return timer_counter * TIMER_TARGET_MS + TICKS_TO_MS(elapsed_ticks(timer_ticks));
+}
+
+static inline __attribute__((always_inline)) uint32_t get_usecs()
+{
+  return TICKS_TO_US(elapsed_ticks(timer_ticks));
+}
 
 #endif /* __TIMER_H__ */
