@@ -24,9 +24,6 @@ else ifeq ($(PLATFORM),KL25Z)
   TOOLCHAIN = arm-none-eabi-
   # Disable standard I/O functions (printf, etc), enable HW peripherals
   CPPFLAGS += -DKL25Z
-  ifdef KL25Z_USE_DMA
-    CPPFLAGS += -DMEMORY_USES_DMA
-  endif
   # Compile for 48MHz core, 24MHz bus operation (PEE mode)
   CPPFLAGS += -DCLOCK_SETUP=1
   # Use of 'march' _should_ be redundant here, as armv6-m will be implied by

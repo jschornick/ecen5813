@@ -1,8 +1,8 @@
 /**
- * @file memory_kl25z.c
- * @brief Memory function definitions for the KL25Z
+ * @file memory_dma_kl25z.c
+ * @brief Memory DMA function definitions for the KL25Z
  *
- * Functions which perform basic memory manipulation on the KL25Z.
+ * Functions which perform memory transfers via DMA on the KL25Z.
  *
  * @author Jeff Schornick
  * @date 2017/07/27
@@ -10,13 +10,13 @@
 
 #include <stdint.h>
 #include <stddef.h>  /* size_t, NULL */
-#include "memory.h"
+#include "memory_dma.h"
 #include "dma.h"
 
 /* Move DMA config to separate file? */
 #include "MKL25Z4.h"
 
-uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length)
+uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length)
 {
   /* NULL arguments are invalid, return 0 address to indicate failure */
   if ((src == NULL) || (dst == NULL) || (length <= 0))
@@ -62,7 +62,7 @@ uint8_t *my_memmove(uint8_t *src, uint8_t *dst, size_t length)
   return dst;
 }
 
-uint8_t *my_memset(uint8_t *src, size_t length, uint8_t value) {
+uint8_t *memset_dma(uint8_t *src, size_t length, uint8_t value) {
   /* NULL src is invalid */
   if ((src == NULL) || (length <= 0))
   {

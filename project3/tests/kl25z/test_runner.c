@@ -2,7 +2,7 @@
 
 static void RunAllTests(void)
 {
-  RUN_TEST_GROUP(Memory);
+  RUN_TEST_GROUP(MemDMA);
 }
 
 #ifdef KL25Z

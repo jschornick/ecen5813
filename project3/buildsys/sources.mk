@@ -22,23 +22,23 @@ ifeq ($(PLATFORM),HOST)
   PLATFORM_SRCS += io_std.c
   PLATFORM_SRCS += gpio_fake.c
   PLATFORM_SRCS += spi_fake.c
-  PLATFORM_SRCS += timer_posix.c
+  PLATFORM_SRCS += timer_linux.c
+
 else ifeq ($(PLATFORM),BBB)
   PLATFORM_SRCS += io_std.c
   PLATFORM_SRCS += gpio_fake.c
   PLATFORM_SRCS += spi_fake.c
-  PLATFORM_SRCS += timer_posix.c
+  PLATFORM_SRCS += timer_linux.c
+
 else ifeq ($(PLATFORM),KL25Z)
   PLATFORM_SRCS += gpio_kl25z.c
   PLATFORM_SRCS += io_kl25z.c
   PLATFORM_SRCS += led_kl25z.c
+  PLATFORM_SRCS += memory_dma_kl25z.c dma_kl25z.c
   PLATFORM_SRCS += spi_kl25z.c
   PLATFORM_SRCS += system_MKL25Z4.c
   PLATFORM_SRCS += timer_kl25z.c
   PLATFORM_SRCS += uart_kl25z.c
-  ifdef KL25Z_USE_DMA
-    PLATFORM_SRCS += memory_kl25z.c dma_kl25z.c
-  endif
   ASM_SRCS += startup_MKL25Z4.S
 else
   $(error Invalid PLATFORM specified, must be one of: HOST, BBB, KL25Z)

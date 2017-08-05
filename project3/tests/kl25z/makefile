@@ -29,7 +29,7 @@ PRJ_LIB=$(PRJ_BUILD)/libproject3.a
 SRCS=\
   $(UNITY_DIR)/src/unity.c \
   $(UNITY_DIR)/extras/fixture/src/unity_fixture.c \
-  test_memory.c \
+  test_memdma.c \
   test_runner.c \
   unity_helpers.c
 
