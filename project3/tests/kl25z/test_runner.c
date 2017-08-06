@@ -2,7 +2,8 @@
 
 static void RunAllTests(void)
 {
-  RUN_TEST_GROUP(MemDMA);
+  RUN_TEST_GROUP(memset_dma);
+  RUN_TEST_GROUP(memmove_dma);
 }
 
 #ifdef KL25Z
