@@ -19,6 +19,7 @@
 #include "profile.h"
 #include "memory.h"
 #include "io.h"
+#include "processor.h"
 #ifdef KL25Z
 #include "memory_dma.h"
 #include "dma.h"
@@ -180,24 +181,33 @@ void profile_memory() {
 
 }
 
+#define MAX_CHARS 100  /* Maximum to read at a time */
+uint8_t chars[MAX_CHARS];
 void project3(void)
 {
   platform_init();
 
   logging_demo();
 
-  profile_calibrate();
-  profile_memory();
-  profile_memory();
-  profile_memory();
+  /* profile_calibrate(); */
+  /* profile_memory(); */
+  /* profile_memory(); */
+  /* profile_memory(); */
 
   nrf_demo();
 
-  LOG_ID(SYSTEM_HALTED);
-  LOG_FLUSH();
+  processor_init();
 
   while (1) {
+    size_t rx_count;
+    rx_count = read_str( (char *) chars, MAX_CHARS);
+    if( rx_count > 0 ) {
+      process_chars( chars, rx_count );
+    }
     LOG_FLUSH();
   }
+
+  LOG_ID(SYSTEM_HALTED);
+  LOG_FLUSH();
 }
 

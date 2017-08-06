@@ -73,8 +73,8 @@ UART_status_t UART_configure()
   // Enable UART RX/TX interrupts
   //  see ch39: interrupts and status flags, p745
   UART0->C2 |= UART0_C2_RIE(1);  // Interrupt on RDRF (Rx data ready)
-  UART0->C2 |= UART0_C2_TIE(1);  // Interrupt on TDRE (Tx register ready)
-  UART0->C2 &= ~(UART0_C2_TCIE_MASK); // NO interrtupt on TC=1
+  UART0->C2 &= ~(UART0_C2_TIE_MASK);  // No nterrupt on TDRE (Tx register ready)
+  UART0->C2 &= ~(UART0_C2_TCIE_MASK); // No interrtupt on TC=1
 
   // Initialize the Rx/Tx circular buffers before first use
   CB_init(&rxbuf, UART_BUF_SIZE);
@@ -91,25 +91,20 @@ UART_status_t UART_configure()
 UART_status_t UART_send(uint8_t data)
 {
   /* Wait until we successfully queue the data */
-  while( CB_add_item(&txbuf, data) != CB_OK );
-  /* Kick the interrupt handler, which will either process the transmission
-     immediately or refire when it is ready */
-  NVIC_SetPendingIRQ(UART0_IRQn);
-
+  /* while( CB_add_item(&txbuf, data) != CB_OK ); */
+  /* NVIC_SetPendingIRQ(UART0_IRQn); */
+  while( !(UART0->S1 & UART0_S1_TDRE_MASK) ) {};
+  UART0->D = data;
   return UART_OK;
 }
 
 UART_status_t UART_send_n(const uint8_t *data, size_t num_bytes)
 {
-  /* Ensure all bytes are placed on the TX queue */
   while( num_bytes > 0 ) {
-    if( CB_add_item(&txbuf, *data) == CB_OK) {
-      data++;
-      num_bytes--;
-    }
+    while( !(UART0->S1 & UART0_S1_TDRE_MASK)) {};
+    UART0->D = *data++;
+    num_bytes--;
   }
-  /* Kick the interrupt handler to start the transmission */
-  NVIC_SetPendingIRQ(UART0_IRQn);
 
   return UART_OK;
 }
@@ -154,14 +149,8 @@ void UART0_IRQHandler(void)
   if(UART0->S1 & UART0_S1_TDRE_MASK) {
     if(!CB_is_empty(&txbuf)) {
       CB_remove_item(&txbuf, &item);
-      UART0->D = item;
-    } else {
-      // We have to set UART0->D even if we didn't send so that interrupt clears
-      // Would it be better to just send null?
-      UART0->C2 &= ~(UART0_C2_TE_MASK); // TX disable
-      UART0->D = item;
-      UART0->C2 |= UART0_C2_TE(1); // 1 = TX enable
     }
+    UART0->D = item;
   }
 
   if(UART0->S1 & UART0_S1_RDRF_MASK) {

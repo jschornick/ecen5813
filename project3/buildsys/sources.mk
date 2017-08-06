@@ -15,6 +15,7 @@ COMMON_SRCS = \
   memory.c \
   nrf.c \
   platform.c \
+  processor.c \
   profile.c \
   project3.c
 

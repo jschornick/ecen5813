@@ -61,7 +61,7 @@ PROJFLAGS += -DPROF_BUFFER_SIZE=$(PROF_BUFFER_SIZE)
 
 # Use DMA on the KL25Z
 KL25Z_USE_DMA=1
-KL25Z_UART_BLOCKING=1
+#KL25Z_UART_BLOCKING=1
 
 # Makefile includes for the build system
 include $(BSYS_DIR)/toolchain.mk

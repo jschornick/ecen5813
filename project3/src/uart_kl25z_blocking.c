@@ -95,9 +95,9 @@ UART_status_t UART_send_n(const uint8_t *data, size_t num_bytes)
 
 UART_status_t UART_receive(uint8_t *data)
 {
-  // Block until we can collect a byte of data off the RX queue. */
-  while(CB_is_empty(&rxbuf)) {};
-  CB_remove_item(&rxbuf, data);
+  while(UART0->S1 & UART0_S1_RDRF_MASK) {
+    *data = UART0->D;
+  }
 
   return UART_OK;
 }
@@ -105,12 +105,11 @@ UART_status_t UART_receive(uint8_t *data)
 UART_status_t UART_receive_n(uint8_t *data, size_t num_bytes)
 {
   while( num_bytes > 0 ) {
-    if(CB_remove_item(&rxbuf, data) == CB_OK) {
-      data++;
+    while(UART0->S1 & UART0_S1_RDRF_MASK) {
+      *data++ = UART0->D;
       num_bytes--;
     }
   }
-
   return UART_OK;
 }
 
