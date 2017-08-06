@@ -27,14 +27,13 @@ void profile_calibrate(void);
     uint32_t start_time;                                        \
     uint32_t end_time;                                          \
     int32_t result;                                             \
-    LOG_STR(PROFILING_STARTED, ID);                             \
     start_time = get_usecs();                                   \
     CODE ;                                                      \
     end_time = get_usecs();                                     \
-    LOG_STR(PROFILING_COMPLETED, ID);                           \
     result = end_time - start_time -profile_overhead;           \
+    result = (result >=0) ? result : 0;                         \
     *RESULT = result;                                           \
-    LOG_VAL(PROFILING_RESULT, (result >= 0) ? result : 0 , ID); \
-}
+    LOG_VAL(PROFILING_RESULT, (uint32_t) result , ID);          \
+  }
 
 #endif /* __PROFILE_H__ */
