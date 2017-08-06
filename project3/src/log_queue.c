@@ -14,8 +14,6 @@
 #include "logger.h"
 #include "log_queue.h"
 
-#include <stdio.h>
-
 Log_status_t lq_init(Log_q *queue, size_t size)
 {
   if( queue == NULL ) {
@@ -143,7 +141,9 @@ Log_status_t lq_remove(Log_q *queue, Log_t *item)
   copy_size = (max_data < item->length) ? max_data : item->length;
   /* read data */
   lq_remove_bytes(queue, item->data, copy_size);
-  lq_drop_bytes(queue, item->length - copy_size);
+  if( copy_size < item->length ) {
+    lq_drop_bytes(queue, item->length - copy_size);
+  }
   END_CRITICAL();
 
   item->length = copy_size;

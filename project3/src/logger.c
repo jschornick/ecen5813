@@ -16,7 +16,7 @@
 #include "timer.h"
 #include "logger.h"
 
-#define SYSTEM_LOG_SIZE (2000)
+#define SYSTEM_LOG_SIZE (1000)
 
 Log_q system_log;
 uint32_t log_epoch;
@@ -80,10 +80,12 @@ void log_val(Log_id_t id, int32_t val, char *name)
   log.type = LD_NVAL;
   log.length = sizeof(val) + strlen(name) + 1;
   log.data = malloc(log.length);
+
+  /* Data format is 4-byte integer, then the null-terminated string */
   *( (uint32_t *) log.data) = val;
   strncpy((char *) log.data+ sizeof(val), name, log.length-sizeof(val));
   lq_add(&system_log, &log);
-  free(log.data); /* Leak fixed?! */
+  free(log.data);
 }
 
 void log_id(Log_id_t id)
@@ -105,6 +107,7 @@ void log_flush(void)
     log.length = 50;
     lq_remove(&system_log, &log);
     LOG_OUT(&log);
+    free(log.data);
   }
   io_flush();
 }
@@ -178,6 +181,12 @@ void log_send_binary(Log_t *log)
 void logging_init()
 {
   log_epoch = get_time();
-  lq_init(&system_log, SYSTEM_LOG_SIZE);
-  log_id( LOGGER_INITIALIZED );
+  if(lq_init(&system_log, SYSTEM_LOG_SIZE) == LQ_OK)
+  {
+    LOG_ID( LOGGER_INITIALIZED );
+  }
+  else
+  {
+    LOG_RAW_STRING("Logger failed to initialize!\n");
+  }
 }

@@ -54,9 +54,8 @@ typedef struct
   uint32_t ms;    /* time in ms */
   size_t length;  /* length of data */
   uint8_t *data;  /* log data of `length` bytes */
-} Log_t;
+} __attribute__((packed)) Log_t;
 
-/* TODO: Does this handle all alignment padding isuuse? Equals 16, not 12!  */
 #define LOG_HEADER_SIZE (sizeof(Log_t) - sizeof(uint8_t *))
 
 #if defined(LOG_OUT_NULL)
