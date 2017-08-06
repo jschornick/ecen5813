@@ -9,6 +9,7 @@
 **/
 
 #include <stdint.h>
+#include <stdlib.h>
 #include "project3.h"
 #include "platform.h"
 #include "logger.h"
@@ -23,14 +24,12 @@
 #include "dma.h"
 #endif
 
-#include <stdlib.h>
 
-Log_t foo;
-uint8_t data[] = { 0xAB, 0xCD, 0xEF, 0x01 };
-void log_test(void)
+void logging_demo(void)
 {
 
   // Raw, non-queued logging
+  uint8_t data[] = { 0xAB, 0xCD, 0xEF, 0x01 };
   LOG_RAW_STRING("Hello\n");
   LOG_RAW_DATA( (uint8_t *) &data, 4);
   LOG_RAW_STRING("\n");
@@ -38,19 +37,22 @@ void log_test(void)
   LOG_RAW_STRING("\n");
 
   // Log queue logging
+  Log_t foo;
   foo.id = INFO;
+  foo.type = LD_STR;
   foo.length = 10;
-  foo.data = (uint8_t *) "A message";
+  foo.data = (uint8_t *) "123456789";
   LOG_ITEM( &foo );
 
-  LOG_STR(WARNING, "A much too verbose message for the logger");
-  LOG_INFO("This is much simpler!");
+  LOG_STR(ERROR, "Life is better when you don't have to count");
+  LOG_VAL(WARNING, 42, "My cool variable");
+  LOG_INFO("Super quick debug!");
 
   LOG_FLUSH();
 }
 
 
-void nrf_test() {
+void nrf_demo() {
   uint8_t addr[5];
   uint8_t test_addr1[] = { 0x01, 0x02, 0x03, 0x04, 0x05 };
   uint8_t test_addr2[] = { 0xab, 0xcd, 0xef, 0x01, 0x02 };
@@ -85,6 +87,7 @@ void nrf_test() {
   nrf_write_tx_addr(test_addr2);
   nrf_read_tx_addr(addr);
   LOG_DATA(NRF_ADDRESS, addr, 5);
+  LOG_FLUSH();
 }
 
 #ifdef KL25Z
@@ -98,6 +101,7 @@ uint8_t buffer2[PROF_BUFFER_SIZE];
 #endif
 
 void print_result(char *func, uint32_t *results, uint8_t sizes) {
+  print_str("| ");
   print_str(func);
   print_str(" |");
   for(uint8_t i=0; i<sizes; i++) {
@@ -115,14 +119,13 @@ void profile_memory() {
   uint32_t results[num_funcs][num_sizes];
   uint8_t func;
 
-  profile_calibrate();
+  LOG_ID(PROFILING_STARTED);
 
   for(uint8_t i=0; i<num_sizes; i++)
   {
     uint32_t test_size = test_sizes[i];
     func = 0;
 
-    LOG_INFO("---");
     if( PROF_BUFFER_SIZE < test_size )
     {
       LOG_VAL(WARNING, test_size, "Test too big, buffer");
@@ -149,19 +152,22 @@ void profile_memory() {
     LOG_FLUSH();
   }
 
-  print_str("Profile Result Summary\n");
-  print_str("------------------------------------------\n");
-  print_str("             |   10 |   50 | 1000 | 5000 |\n");
-  print_str("------------------------------------------\n");
+  LOG_ID(PROFILING_COMPLETED);
+
+  print_str("+------------------------------------------+\n");
+  print_str("| -+-        Profiling Results         -+- |\n");
+  print_str("|------------------------------------------|\n");
+  print_str("|              |   10 |   50 | 1000 | 5000 |\n");
+  print_str("|------------------------------------------|\n");
 
   func = 0;
-  print_result("memset      ", results[func++], num_sizes); 
+  print_result("memset      ", results[func++], num_sizes);
   print_result("my_memset   ", results[func++], num_sizes);
   #ifdef DMA_AVAILABLE
   print_result("memset_dma  ", results[func++], num_sizes);
   print_result("memset_dma8 ", results[func++], num_sizes);
   #endif
-  print_str("------------------------------------------\n");
+  print_str("|------------------------------------------|\n");
   print_result("memmove     ", results[func++], num_sizes);
   print_result("my_memmove  ", results[func++], num_sizes);
   #ifdef DMA_AVAILABLE
@@ -169,7 +175,8 @@ void profile_memory() {
   print_result("memmove_dma8", results[func++], num_sizes);
   #endif
 
-  print_str("------------------------------------------\n");
+  print_str("+------------------------------------------+\n");
+  LOG_FLUSH();
 
 }
 
@@ -177,28 +184,20 @@ void project3(void)
 {
   platform_init();
 
-  //log_test();
+  logging_demo();
 
+  profile_calibrate();
+  profile_memory();
+  profile_memory();
   profile_memory();
 
-  nrf_test();
+  nrf_demo();
 
   LOG_ID(SYSTEM_HALTED);
   LOG_FLUSH();
 
-  //while(1) { log_flush(); };
-
-  uint32_t i = 0;
   while (1) {
-    i++;
-
-    // TODO: figure out why this breaks logger on KL25Z (uart is fine in blocking mode)
-    /* log_val(i, "Foo"); */
-
     LOG_FLUSH();
-
-    //print_int(i); print_str((uint8_t*)" FTW!\n");
-    //io_flush();
   }
 }
 
