@@ -30,7 +30,9 @@ void platform_init(void) {
   led_on(GREEN_LED);
 
   systick_setup();
-  timer_setup();  // every xyz ms
+  timer_setup();
+  rtc_setup();
+
   dma_setup();
 
   UART_configure();

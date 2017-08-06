@@ -74,6 +74,7 @@ void timer_setup(void)
   NVIC_EnableIRQ(TPM0_IRQn);
 }
 
+
 /* Increment counter and process heartbeat every overflow */
 void TPM0_IRQHandler(void)
 {
@@ -83,10 +84,58 @@ void TPM0_IRQHandler(void)
   {
     if( (timer_counter % 10 ) == 0) {
       led_toggle(GREEN_LED);
-      LOG_ID(HEARTBEAT);
     }
     // Write 1 to TOF to clear flag
     TPM0->SC |= TPM_SC_TOF_MASK;
   }
 }
 
+
+void rtc_setup(void)
+{
+  // RTC Access Control
+  SIM->SCGC6 |= SIM_SCGC6_RTC(1); // Access and interrupts enabled
+  SIM->SCGC5 |= SIM_SCGC5_PORTC(1);  // enabled
+
+  // from CLOCK_SETUP=1
+  // MCG_C1: IRCLKEN=1, MCGIRCLK active
+  // MCG_C2: IRCS=0, slow internal reference clock
+
+  // RTC_CLKIN: PTC1 (mode 1)
+  PORTC_PCR1 |= PORT_PCR_MUX(1);
+
+  // RTC_CKLOUT: PTC3 [J1:5] (mode 5), PTE0 [J2:18] (mode 4)
+  PORTC_PCR3 |= PORT_PCR_MUX(5);
+
+  // Clock out selection
+  // 010 Bus clock
+  // 011 LPO clock (1 kHz)
+  // 100 MCGIRCLK
+  // 110 OSCERCLK
+  SIM->SOPT2 |= SIM_SOPT2_CLKOUTSEL(4); // MCGIRCLK to CLK_OUT
+
+  SIM->SOPT1 &= ~(SIM_SOPT1_OSC32KSEL_MASK);
+  SIM->SOPT1 |= SIM_SOPT1_OSC32KSEL(2);  // 2=RTC_CLKIN
+
+  // RTC Control Register
+  //RTC->CR = RTC_CR_OSCE(1);  // Oscillator Enable
+
+  // RTC Status Register
+  //   Write to TSR to set time and clear Timer Invalid Flag
+  if (RTC->SR & RTC_SR_TIF_MASK) {
+    RTC_TSR = 1502055699;
+  }
+  RTC->SR |= RTC_SR_TCE(1); // Time Counter Enable (read-only, incrementing);
+
+  // Timer seconds interrupt
+  RTC->IER = RTC_IER_TSIE(1);
+
+  NVIC_ClearPendingIRQ(RTC_Seconds_IRQn);
+  NVIC_EnableIRQ(RTC_Seconds_IRQn);
+}
+
+void RTC_Seconds_IRQHandler(void)
+{
+  // No flag to clear Timer Seconds interrupt
+  LOG_ID(HEARTBEAT);
+}

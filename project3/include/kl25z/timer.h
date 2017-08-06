@@ -143,12 +143,14 @@ static inline __attribute__((always_inline)) void delay_us(uint16_t us)
 
 static inline __attribute__((always_inline)) uint32_t get_time()
 {
-  return timer_counter * TIMER_TARGET_MS + TICKS_TO_MS(elapsed_ticks(timer_ticks));
+  return RTC->TSR;
 }
 
 static inline __attribute__((always_inline)) uint32_t get_usecs()
 {
   return TICKS_TO_US(elapsed_ticks(timer_ticks));
 }
+
+void rtc_setup(void);
 
 #endif /* __TIMER_H__ */
