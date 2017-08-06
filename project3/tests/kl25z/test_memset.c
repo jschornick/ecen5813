@@ -15,8 +15,6 @@ uint8_t *mem2;
 TEST_SETUP(memset_dma)
 {
 
-  // dma_setup(); ??
-
   mem1 = malloc(MEMLEN);
   mem2 = malloc(MEMLEN);
 

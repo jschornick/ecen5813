@@ -1,4 +1,5 @@
 #include "unity_fixture.h"
+#include "platform.h"
 
 static void RunAllTests(void)
 {
@@ -17,6 +18,8 @@ int main(void)
   int argc=0;
   const char* argv[] = {};
 #endif
+
+  platform_init();
 
   UnityMain(argc, argv, RunAllTests);
   while(1);

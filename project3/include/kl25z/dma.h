@@ -1,5 +1,5 @@
 /**
- * @file memory_kl25z.h
+ * @file dma.h
  * @brief DMA function declarations for the KL25Z
  *
  * Functions which configure the DMA controller, perform transfers, and report
@@ -21,6 +21,8 @@
 #define DMA_8_BIT  1
 #define DMA_16_BIT 2
 #define DMA_32_BIT 0
+
+extern volatile uint8_t dma_transfer_complete;
 
 /**
  * @brief Setup the DMA controller
