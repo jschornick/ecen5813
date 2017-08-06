@@ -46,12 +46,18 @@ EXE = $(TARGET)_$(PLATFORM).elf
 
 # Project flags, interpretted by the preprocessor
 PROJFLAGS = -DPROJECT3
-#PROJFLAGS += -DLOG_OUT_BINARY
-#PROJFLAGS += -DLOG_OUT_NULL
-PROJFLAGS += -DLOG_OUT_ASCII
 
-PROF_BUFFER_SIZE=1000
+# Select logging output format
+#PROJFLAGS += -DLOG_OUT_BINARY
+PROJFLAGS += -DLOG_OUT_ASCII
+#PROJFLAGS += -DLOG_OUT_NULL
+
+# Profiling test
+# Remove all logging at compile time
+PROJFLAGS += -DDISABLE_LOG
+PROF_BUFFER_SIZE=5000
 PROJFLAGS += -DPROF_BUFFER_SIZE=$(PROF_BUFFER_SIZE)
+
 
 # Use DMA on the KL25Z
 KL25Z_USE_DMA=1
