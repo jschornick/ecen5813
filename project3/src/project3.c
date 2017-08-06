@@ -31,6 +31,7 @@ void logging_demo(void)
 
   // Raw, non-queued logging
   uint8_t data[] = { 0xAB, 0xCD, 0xEF, 0x01 };
+  data[0] = data[0];
   LOG_RAW_STRING("Hello\n");
   LOG_RAW_DATA( (uint8_t *) &data, 4);
   LOG_RAW_STRING("\n");
@@ -39,6 +40,7 @@ void logging_demo(void)
 
   // Log queue logging
   Log_t foo;
+  foo = foo;
   foo.id = INFO;
   foo.type = LD_STR;
   foo.length = 10;
@@ -96,7 +98,6 @@ extern uint32_t __BUFFER_START;
 uint8_t *buffer1 = (uint8_t *) &__BUFFER_START;
 uint8_t *buffer2 = ((uint8_t *) &__BUFFER_START) + PROF_BUFFER_SIZE;
 #else
-//TODO: malloc these to get off the stack on linux?
 uint8_t buffer1[PROF_BUFFER_SIZE];
 uint8_t buffer2[PROF_BUFFER_SIZE];
 #endif
@@ -186,18 +187,21 @@ uint8_t chars[MAX_CHARS];
 void project3(void)
 {
   platform_init();
-
   logging_demo();
 
-  /* profile_calibrate(); */
-  /* profile_memory(); */
-  /* profile_memory(); */
-  /* profile_memory(); */
+  #ifdef PROFILER
+  profile_calibrate();
+  profile_memory();
+  profile_memory();
+  profile_memory();
+  #endif
 
+  #ifdef NRF
   nrf_demo();
+  #endif
 
+  #ifdef DATAPROCESSOR
   processor_init();
-
   while (1) {
     size_t rx_count;
     rx_count = read_str( (char *) chars, MAX_CHARS);
@@ -206,7 +210,13 @@ void project3(void)
     }
     LOG_FLUSH();
   }
+  #endif
 
+  // Show a few heartbeats...
+  while(1)
+  {
+    LOG_FLUSH();
+  }
   LOG_ID(SYSTEM_HALTED);
   LOG_FLUSH();
 }

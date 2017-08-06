@@ -41,27 +41,32 @@ BUILD_BASE = BUILDOUT
 BUILD_DIR = $(BUILD_BASE)/$(PLATFORM)
 
 # Filename for the built executable
-#EXE = $(BUILD_DIR)/$(TARGET).elf
 EXE = $(TARGET)_$(PLATFORM).elf
 
 # Project flags, interpretted by the preprocessor
 PROJFLAGS = -DPROJECT3
 
-# Select logging output format
+## Logging Demo  ##
+# Select logging enable/disable and format
+#PROJFLAGS += -DDISABLE_LOG
 #PROJFLAGS += -DLOG_OUT_BINARY
 PROJFLAGS += -DLOG_OUT_ASCII
 #PROJFLAGS += -DLOG_OUT_NULL
 
-# Profiling test
-# Remove all logging at compile time
+## Profiling  ##
+#PROJFLAGS += -DPROFILER
 #PROJFLAGS += -DDISABLE_LOG
+# KL25Z_USE_DMA= 1
 PROF_BUFFER_SIZE=5000
 PROJFLAGS += -DPROF_BUFFER_SIZE=$(PROF_BUFFER_SIZE)
 
+## NRF Demo ##
+PROJFLAGS += -DNRF
 
+## Data Processor
 # Use DMA on the KL25Z
-KL25Z_USE_DMA=1
-#KL25Z_UART_BLOCKING=1
+#PROJFLAGS += -DPROCESSOR
+#KL25Z_UART_NONBLOCK=1
 
 # Makefile includes for the build system
 include $(BSYS_DIR)/toolchain.mk
