@@ -33,6 +33,8 @@ else ifeq ($(PLATFORM),KL25Z)
   CPPFLAGS += -DKL25Z
   # Compile for 48MHz core, 24MHz bus operation (PEE mode)
   CPPFLAGS += -DCLOCK_SETUP=1
+  # Set RTC to compile time
+  CPPFLAGS += -DRTC_TIME=$(shell date +%s)
   # Use of 'march' _should_ be redundant here, as armv6-m will be implied by
   # specifying 'mcpu', but the resulting binaries are not the same
   CFLAGS += -mcpu=cortex-m0plus

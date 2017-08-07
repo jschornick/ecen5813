@@ -123,7 +123,8 @@ void rtc_setup(void)
   // RTC Status Register
   //   Write to TSR to set time and clear Timer Invalid Flag
   if (RTC->SR & RTC_SR_TIF_MASK) {
-    RTC_TSR = 1502055699;
+    // Use value defined at compile time
+    RTC_TSR = RTC_TIME;
   }
   RTC->SR |= RTC_SR_TCE(1); // Time Counter Enable (read-only, incrementing);
 
