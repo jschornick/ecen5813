@@ -56,10 +56,9 @@ void logging_demo(void)
 
 
 void nrf_demo() {
-  uint8_t addr[5];
-  uint8_t test_addr1[] = { 0x01, 0x02, 0x03, 0x04, 0x05 };
-  uint8_t test_addr2[] = { 0xab, 0xcd, 0xef, 0x01, 0x02 };
 
+  uint8_t addr[5];
+  LOG_INFO("Read NRF Registers");
   LOG_VAL(INFO, nrf_read_config(), "CONFIG");
   LOG_VAL(INFO, nrf_read_rf_setup(), "RF_SETUP");
   LOG_VAL(INFO, nrf_read_rf_ch(), "RF_CH");
@@ -69,21 +68,39 @@ void nrf_demo() {
   LOG_DATA(NRF_ADDRESS, addr, 5);
   LOG_FLUSH();
 
-  LOG_INFO("---");
-  LOG_INFO("Writing 0");
-  nrf_write_config(0);  // TX
-  LOG_VAL(INFO, nrf_read_config(), "CONFIG");
-  LOG_INFO("---");
-  LOG_INFO("Writing 1");
-  nrf_write_config(1);  // TX
-  LOG_VAL(INFO, nrf_read_config(), "CONFIG");
-  LOG_INFO("---");
-  LOG_INFO("Writing 2");
-  nrf_write_config(2);  // TX
-  LOG_VAL(INFO, nrf_read_config(), "CONFIG");
-  LOG_INFO("---");
-  LOG_FLUSH();
+  LOG_INFO("Write NRF Registers");
+  uint8_t config_reg;
+  config_reg = nrf_read_config();
+  LOG_VAL(INFO, config_reg, "CONFIG");
 
+  LOG_INFO("Disabling CRC");
+  nrf_write_config( config_reg & ~NRF_CNF_EN_CRC_MASK);
+  config_reg = nrf_read_config();
+  LOG_VAL(INFO, config_reg, "CONFIG");
+
+  LOG_INFO("Enabling CRC");
+  nrf_write_config( config_reg | NRF_CNF_EN_CRC(1) );
+  LOG_VAL(INFO, nrf_read_config(), "CONFIG");
+
+  uint8_t rf_setup;
+  rf_setup = nrf_read_rf_setup();
+  LOG_VAL(INFO, rf_setup, "RF_SETUP");
+
+  LOG_INFO("Setting power to -6dBm");
+  rf_setup &= ~NRF_RFS_RF_PWR_MASK;
+  nrf_write_rf_setup( rf_setup | NRF_RFS_RF_PWR(2));
+  rf_setup = nrf_read_rf_setup();
+  LOG_VAL(INFO, rf_setup, "RF_SETUP");
+
+  LOG_INFO("Setting power to -12dBm");
+  rf_setup &= ~NRF_RFS_RF_PWR_MASK;
+  nrf_write_rf_setup( rf_setup | NRF_RFS_RF_PWR(1));
+  rf_setup = nrf_read_rf_setup();
+  LOG_VAL(INFO, rf_setup, "RF_SETUP");
+
+  uint8_t test_addr1[] = { 0x01, 0x02, 0x03, 0x04, 0x05 };
+  uint8_t test_addr2[] = { 0xab, 0xcd, 0xef, 0x01, 0x02 };
+  LOG_INFO("Change TX Address");
   nrf_write_tx_addr(test_addr1);
   nrf_read_tx_addr(addr);
   LOG_DATA(NRF_ADDRESS, addr, 5);

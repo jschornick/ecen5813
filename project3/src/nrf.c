@@ -46,8 +46,8 @@ uint8_t nrf_read_register(uint8_t reg)
 
   spi_write_byte(NRF_CMD_READ|reg);
 
-  // The nRF automatically sends a status byte, read it before tyring to read
-  // the result
+  // The nRF automatically sends a status byte, read it before tyring to
+  // read the result
   uint8_t status;
   spi_read_byte(&status);
   //log_val(status, "  R stat");
@@ -62,7 +62,6 @@ uint8_t nrf_read_register(uint8_t reg)
 
 void nrf_write_register(uint8_t reg, uint8_t value)
 {
-  // NOTE: Write registers only in "Power down" mode (track state?)
   nrf_chip_enable();
 
   spi_write_byte(NRF_CMD_WRITE|reg);
@@ -70,7 +69,6 @@ void nrf_write_register(uint8_t reg, uint8_t value)
 
   uint8_t status;
   spi_read_byte(&status);
-  /* log_val(status, "  W stat"); */
 
   nrf_chip_disable();
 }
@@ -128,7 +126,6 @@ void nrf_read_tx_addr(uint8_t * address)
 
   spi_write_byte(NRF_CMD_READ|NRF_REG_TX_ADDR);
   spi_read_byte(&status);
-  /* log_val(status, "   RTX stat"); */
   spi_receive_packet( address, 5, NRF_CMD_NOP);
 
   nrf_chip_disable();
@@ -141,7 +138,6 @@ void nrf_write_tx_addr(uint8_t * address)
 
   spi_write_byte(NRF_CMD_WRITE|NRF_REG_TX_ADDR);
   spi_read_byte(&status);
-  /* log_val(status, "   WTX stat"); */
   spi_send_packet( address, 5);
 
   nrf_chip_disable();

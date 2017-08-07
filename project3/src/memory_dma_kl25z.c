@@ -106,13 +106,11 @@ uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length)
     // Set any initial bytes aligned to 32-bit (length allowing)
     if ( ((dma_align == DMA_16_BIT) || (dma_align == DMA_32_BIT)) && ( (uint32_t) src & 0x1) && (length >= 1) ) {
       // last bit of addreses are both 1, align to 0
-      /* print_str("start bytes 0x01\n"); */
       *dst++ = *src++;
       length--;
     }
     if ( (dma_align == DMA_32_BIT) && ( (uint32_t) src & 0x2) && (length >= 2) ) {
       // last 2 bits of address are 1x... align to 0x
-      /* print_str("start bytes 0x10\n"); */
       my_memcpy(src, dst, 2);
       src += 2;
       dst += 2;
@@ -132,20 +130,12 @@ uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length)
       dma_transfer(DMA_MEM_CHAN, src, dst, length, dma_align, DMA_INC);
     } else {
       // middle first, in dma_align sized chunks
-      /* print_str("overlapping\n"); */
-      /* print_str("\nsrc = "); print_int((int32_t) src); */
-      /* print_str("\ndst = "); print_int((int32_t) dst); */
-      /* print_str("\nxfer = "); print_int((int32_t) (length&align_mask)); */
       dma_transfer(DMA_MEM_CHAN, src, dst, (length & align_mask), dma_align, DMA_INC);
       src += (length & align_mask);
       dst += (length & align_mask);
       length -= (length & align_mask);
       if ( length > 0 ) {
         // have to copy odd ends last
-        /* print_str("leftover\n"); */
-        /* print_str("\nsrc = "); print_int((int32_t) src); */
-        /* print_str("\ndst = "); print_int((int32_t) dst); */
-        /* print_str("\nleft = "); print_int(length); print_str("\n"); */
         dma_wait(DMA_MEM_CHAN);
         my_memcpy(src, dst, length);
       }
@@ -166,37 +156,23 @@ uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length)
        Worst case when dst-src=1, best case when dst-src>=len (on shot).
        NOTE: At some chunk size it's probably best to use a temporary buffer
      */
-
-    /* print_str("\nsrc = "); print_int((int32_t) src); */
-    /* print_str("\ndst = "); print_int((int32_t) dst); */
-    /* print_str("\ndst after src, align = "); print_int(dma_align); print_str("\n"); */
-
     // We're need to WORK BACKWARDS, so align END bytes to 32-bit
     if ( ((dma_align == DMA_16_BIT) || (dma_align == DMA_32_BIT)) && !( (uint32_t) (src+length-1) & 0x1) && (length >= 1) ) {
       // last bit of final addreses are both 0, align to 1 (so aligned when transfering 16-bit)
-      /* print_str("final bytes 0x00\n"); */
       *(dst + length -1 ) = *(src + length - 1);
       length--;
     }
     if ( (dma_align == DMA_32_BIT) && !( (uint32_t) (src+length-1) & 0x2) && (length >= 2) ) {
-      /* print_str("final bytes 0x01\n"); */
       // last 2 bits of last addresses are 01... align to 11 (last 00..11 will be transfered as 32-bit)
       my_memcpy(src+length-2, dst+length-2, 2);
       length -= 2;
     }
 
     // ends now aligned, copy middle and first bytes
-
-    /* print_str("\nsrc = "); print_int((int32_t) src); */
-    /* print_str("\ndst = "); print_int((int32_t) dst); */
-
     size_t front_len = length & (~align_mask);
-    /* print_str("\nfront_len = "); print_int((int32_t) front_len); */
-
     size_t offset = dst - src;
     // when no overlap, copy any odd first bytes first so we can chunk DMA the middle
     if( (length <= offset) && (front_len > 0) ) {
-      /* print_str("\nno overlap\n"); */
       my_memcpy(src, dst, front_len);
       src += front_len;
       dst += front_len;
@@ -205,8 +181,6 @@ uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length)
 
     // The offset determines how much dma at a time
     // there is certainly a minimum offset for which dma is slower than CPU copies
-    /* print_str("\noffset = "); print_int(offset); print_str("\n"); */
-    /* print_str("\nlength = "); print_int(length); print_str("\n"); */
     while( length != 0 )
     {
       if ( length > offset)  /* partial transfer */
@@ -215,13 +189,10 @@ uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length)
         // if offset is unaligned, it would be reflected in dma_align
         // so we can alwasy transfer the full offset using dma_align-sized blocks
         dma_transfer(DMA_MEM_CHAN, src+length, dst+length, offset, dma_align, DMA_INC);
-        /* print_str("\nleft = "); print_int(length); print_str("\n"); */
       }
       else /* we can finish the transfer */
       {
         front_len = length & (~align_mask);
-        /* print_str("\nfinal dma = "); print_int(length&align_mask); print_str("\n"); */
-        /* print_str("\nfinal = "); print_int(front_len); print_str("\n"); */
         dma_transfer(DMA_MEM_CHAN, src + front_len, dst + front_len, (length&align_mask), dma_align, DMA_INC);
         if(front_len) {
           dma_wait(DMA_MEM_CHAN);
@@ -244,15 +215,6 @@ uint8_t *memset_dma(uint8_t *ptr, size_t length, uint8_t value)
   {
     return NULL;
   }
-
-  /* print_str("Memset_dma("); */
-  /* print_int((uint32_t) ptr); */
-  /* print_str(", "); */
-  /* print_int(length); */
-  /* print_str(", "); */
-  /* print_int(value); */
-  /* print_str(")\n"); */
-  /* io_flush(); */
 
   // Make an 32-bit aligned repeated copy of the value
   uint32_t aligned_val = value | (value<<8) | (value<<16) | (value<<24);
@@ -279,12 +241,6 @@ uint8_t *memset_dma(uint8_t *ptr, size_t length, uint8_t value)
     *ptr++ = value;
     length--;
   }
-
-  // Now ptr is 32-bit aligned
-  /* print_str("Length: "); */
-  /* print_int(length); */
-  /* printchar('\n'); */
-  /* io_flush(); */
 
   // Set 1-3 unaligned bytes at the end if length not divisible by 4
   if( (length & 0x3) && (length > 0) ) {

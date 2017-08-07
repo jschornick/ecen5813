@@ -17,9 +17,8 @@
 #include "spi.h"
 #include "timer.h"
 
-#define SPI_PRESCALE (0)  /* 1x */
-#define SPI_DIVIDER (1) /* 2^2 = 4x --> 6MHz */
-//#define SPI_DIVIDER (2) /* 2^2 = 8x --> 3MHz*/
+#define SPI_PRESCALE (0) /* 1x */
+#define SPI_DIVIDER  (1) /* 2^2 = 4x --> 6MHz */
 #define SPI_CLOCK ( BUS_CLOCK / ((SPI_PRESCALE+1) * (1 << (SPI_DIVIDER+1))) )  /* Ref: p677 */
 
 void spi_init(void)
@@ -61,25 +60,22 @@ void spi_read_byte(uint8_t *byte)
   // Wait for SPI0_S->SPRF=1 (RX full)
   while( !(SPI0->S & SPI_S_SPRF_MASK) ) {};
   *byte = SPI0->D;
-  //LOG_VAL(*byte, " SPI <--");
 }
 
 void spi_write_byte(uint8_t byte)
 {
   // Wait for SPI0_S->SPTEF=1 (TX empty)
-  //   Tx will be ignored if not read first!
+  //    Tx will be ignored if not read first!
   spi_flush();
   SPI0->D = byte;
   // FIXME: why do we need this delay to get nRF status?
   delay_us(1);
-  //LOG_VAL(byte, " SPI -->");
 }
 
 void spi_send_packet(uint8_t *p, size_t length)
 {
   while( length-- > 0) {
     spi_flush();
-    //LOG_VAL(*p, " SPI -->");
     SPI0->D = *p++;
   }
   // FIXME: why do we need this delay to get nRF status?
@@ -93,7 +89,6 @@ void spi_receive_packet(uint8_t *p, size_t length, uint8_t nop)
     spi_read_byte(p++);
   }
 }
-
 
 void spi_flush(void)
 {

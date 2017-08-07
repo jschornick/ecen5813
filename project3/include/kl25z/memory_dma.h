@@ -38,7 +38,7 @@
 **/
 uint8_t *memmove_dma(uint8_t *src, uint8_t *dst, size_t length);
 
-// same but with simple 8-bit DMA transfers only
+// Same as above, but with simple 8-bit DMA transfers only
 uint8_t *memmove_dma8(uint8_t *src, uint8_t *dst, size_t length);
 
 /**
@@ -60,7 +60,7 @@ uint8_t *memmove_dma8(uint8_t *src, uint8_t *dst, size_t length);
 **/
 uint8_t *memset_dma(uint8_t *ptr, size_t length, uint8_t value);
 
-// same but with simple 8-bit DMA transfers only
+// Same as above, but with simple 8-bit DMA transfers only
 uint8_t *memset_dma8(uint8_t *ptr, size_t length, uint8_t value);
 
 #endif /* __MEMORY_DMA_H__ */
