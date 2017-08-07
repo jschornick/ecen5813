@@ -10,17 +10,17 @@
 #include <MKL25Z4.h>
 #include "led.h"
 
-inline void led_on(GPIO_Type *gpio, uint8_t pin)
+__attribute__((always_inline)) inline void led_on(GPIO_Type *gpio, uint8_t pin)
 {
   gpio->PCOR = (1<<pin);  // set low (on)
 }
 
-inline void led_off(GPIO_Type *gpio, uint8_t pin)
+__attribute__((always_inline)) inline void led_off(GPIO_Type *gpio, uint8_t pin)
 {
   gpio->PSOR = (1<<pin);  // set high (off)
 }
 
-inline void led_toggle(GPIO_Type *gpio, uint8_t pin)
+__attribute__((always_inline)) inline void led_toggle(GPIO_Type *gpio, uint8_t pin)
 {
   gpio->PTOR = (1<<pin); // toggle output
 }

@@ -128,25 +128,25 @@ void timer_setup(void);
 
 extern volatile uint32_t timer_ticks;
 
-static inline __attribute__((always_inline)) void delay_ms(uint32_t ms)
+__attribute__((always_inline)) static inline void delay_ms(uint32_t ms)
 {
   ms = (ms > SYSTICK_MAX_MS) ? SYSTICK_MAX_MS : ms;
   uint32_t start = get_ticks();
   while( elapsed_ticks(start) < MS_TO_TICKS(ms) ) {};
 }
 
-static inline __attribute__((always_inline)) void delay_us(uint16_t us)
+__attribute__((always_inline)) static inline void delay_us(uint16_t us)
 {
   uint32_t start = get_ticks();
   while( elapsed_ticks(start) < US_TO_TICKS(us) ) {};
 }
 
-static inline __attribute__((always_inline)) uint32_t get_time()
+__attribute__((always_inline)) static inline uint32_t get_time()
 {
   return RTC->TSR;
 }
 
-static inline __attribute__((always_inline)) uint32_t get_usecs()
+__attribute__((always_inline)) static inline uint32_t get_usecs()
 {
   return TICKS_TO_US(elapsed_ticks(timer_ticks));
 }

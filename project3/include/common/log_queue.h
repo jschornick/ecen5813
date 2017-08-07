@@ -97,7 +97,7 @@ Log_status_t lq_add(Log_q *queue, Log_t *item);
 Log_status_t lq_remove(Log_q *queue, Log_t *item);
 
 /**
- * @brief Check if the circular buffer is empty
+ * @brief Check if the log queue is empty
  *
  * Returns LQ_EMPTY (nonzero) if the `queue` points to an empty circular
  * buffer.
@@ -107,8 +107,39 @@ Log_status_t lq_remove(Log_q *queue, Log_t *item);
  * @param[in] queue A pointer to the initialized circular buffer to be checked
  * @return Returns LQ_EMPTY if buffer is empty, LQ_FALSE or error otherwise
  **/
-Log_status_t lq_empty(Log_q *queue);
+__attribute__((always_inline)) static inline Log_status_t lq_empty(Log_q *queue)
+{
+  if( queue == NULL ) {
+    return LQ_NULL;
+  }
+  if( queue->free != queue->size )
+  {
+    return LQ_FALSE;
+  }
+  return LQ_EMPTY;
+}
 
-
+/**
+ * @brief Check if the log queue is full
+ *
+ * Returns LQ_FULL (nonzero) if the `queue` points to an full circular buffer.
+ * If the buffer is not full, LQ_FALSE (0) will be returned instead.
+ *
+ * This is not a particularly useful function, but at least it's inline.
+ *
+ * @param[in] queue A pointer to the initialized circular buffer to be checked
+ * @return Returns LQ_EMPTY if buffer is empty, LQ_FALSE or error otherwise
+ **/
+__attribute__((always_inline)) static inline Log_status_t lq_full(Log_q *queue)
+{
+  if( queue == NULL ) {
+    return LQ_NULL;
+  }
+  if( queue->free != 0 )
+  {
+    return LQ_FALSE;
+  }
+  return LQ_FULL;
+}
 
 #endif /* __LOG_QUEUE_H__ */

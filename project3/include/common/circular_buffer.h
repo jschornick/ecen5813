@@ -109,7 +109,18 @@ CB_status_t CB_remove_item(CircBuf_t *circbuf, cb_item_t *item);
  * @param[in] circbuf A pointer to the initialized circular buffer to be checked
  * @return Returns CB_FULL if buffer is full, CB_FALSE or error otherwise
  **/
-CB_status_t CB_is_full(CircBuf_t *circbuf);
+__attribute__((always_inline)) static inline CB_status_t CB_is_full(CircBuf_t *circbuf)
+{
+  if( circbuf == NULL )
+    {
+      return CB_NULL;
+    }
+  if( circbuf->count != circbuf->size )
+    {
+      return CB_FALSE;
+    }
+  return CB_FULL;
+}
 
 /**
  * @brief Check if the circular buffer is empty
@@ -122,7 +133,19 @@ CB_status_t CB_is_full(CircBuf_t *circbuf);
  * @param[in] circbuf A pointer to the initialized circular buffer to be checked
  * @return Returns CB_EMPTY if buffer is empty, CB_FALSE or error otherwise
  **/
-CB_status_t CB_is_empty(CircBuf_t *circbuf);
+__attribute__((always_inline)) static inline CB_status_t CB_is_empty(CircBuf_t *circbuf)
+{
+  if( circbuf == NULL )
+    {
+      return CB_NULL;
+    }
+  if( circbuf->count != 0 )
+    {
+      return CB_FALSE;
+    }
+  return CB_EMPTY;
+}
+
 
 /**
  * @brief Read on the Nth newest item in the circular buffer
@@ -142,3 +165,4 @@ CB_status_t CB_is_empty(CircBuf_t *circbuf);
 CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item);
 
 #endif /* __CIRCULAR_BUFFER_H__ */
+

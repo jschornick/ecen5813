@@ -15,26 +15,26 @@
 #include <stdint.h>
 #include <stddef.h>
 
-static inline __attribute__((always_inline)) uint32_t get_time()
+__attribute__((always_inline)) static inline uint32_t get_time()
 {
   struct timeval t;
   gettimeofday( &t, NULL );
   return t.tv_sec;
 }
 
-static inline __attribute__((always_inline)) uint32_t get_usecs()
+__attribute__((always_inline)) static inline uint32_t get_usecs()
 {
   struct timespec t;
   clock_gettime(CLOCK_MONOTONIC, &t );
   return t.tv_nsec / 1000;
 }
 
-static inline __attribute__((always_inline)) void delay_ms(uint32_t ms)
+__attribute__((always_inline)) static inline void delay_ms(uint32_t ms)
 {
   usleep(ms*1000);
 }
 
-static inline __attribute__((always_inline)) void delay_us(uint16_t us)
+__attribute__((always_inline)) static inline void delay_us(uint16_t us)
 {
   struct timespec t;
   t.tv_sec = 0;

@@ -14,12 +14,12 @@
 #include "gpio.h"
 
 
-inline void gpio_high(GPIO_Type *gpio, uint8_t pin)
+__attribute__((always_inline)) inline void gpio_high(GPIO_Type *gpio, uint8_t pin)
 {
   gpio->PSOR = (1<<pin);  // set (high)
 }
 
-inline void gpio_low(GPIO_Type *gpio, uint8_t pin)
+__attribute__((always_inline)) inline void gpio_low(GPIO_Type *gpio, uint8_t pin)
 {
   gpio->PCOR = (1<<pin);  // clear (low)
 }

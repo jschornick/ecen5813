@@ -150,16 +150,3 @@ Log_status_t lq_remove(Log_q *queue, Log_t *item)
 
   return LQ_OK;
 }
-
-Log_status_t lq_empty(Log_q *queue)
-{
-  if( queue == NULL ) {
-    return LQ_NULL;
-  }
-  if( queue->free != queue->size )
-  {
-    return LQ_FALSE;
-  }
-  return LQ_EMPTY;
-}
-

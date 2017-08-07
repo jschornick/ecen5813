@@ -103,32 +103,6 @@ CB_status_t CB_remove_item(CircBuf_t *circbuf, uint8_t *item)
   return CB_OK;
 }
 
-CB_status_t CB_is_full(CircBuf_t *circbuf)
-{
-  if( circbuf == NULL )
-  {
-    return CB_NULL;
-  }
-  if( circbuf->count != circbuf->size )
-  {
-    return CB_FALSE;
-  }
-  return CB_FULL;
-}
-
-CB_status_t CB_is_empty(CircBuf_t *circbuf)
-{
-  if( circbuf == NULL )
-  {
-    return CB_NULL;
-  }
-  if( circbuf->count != 0 )
-  {
-    return CB_FALSE;
-  }
-  return CB_EMPTY;
-}
-
 CB_status_t CB_peek(CircBuf_t *circbuf, size_t position, uint8_t *item)
 {
   if( circbuf == NULL || item == NULL)

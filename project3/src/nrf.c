@@ -16,27 +16,28 @@
 #include "nrf.h"
 
 
-static inline void nrf_chip_enable()
+__attribute__((always_inline)) static inline void nrf_chip_enable()
 {
   gpio_low(NRF_CS);
 }
 
-static inline void nrf_chip_disable()
+__attribute__((always_inline)) static inline void nrf_chip_disable()
 {
   gpio_high(NRF_CS);
-  // TODO: need delay between disable/enable? (Tcwh=50ns?)
 }
 
-static inline void nrf_transmit_enable()
+__attribute__((always_inline)) static inline void nrf_transmit_enable()
 {
-  // Power up or CE pin?
-  nrf_write_register(NRF_REG_CONFIG, NRF_PWR_UP(1));
+  // Power up then riase CE pin
+  //nrf_write_register(NRF_REG_CONFIG, NRF_PWR_UP(1));
+  gpio_high(NRF_CE);
 }
 
-static inline void nrf_transmit_disable()
+__attribute__((always_inline)) static inline void nrf_transmit_disable()
 {
-  // Power down???
-  nrf_write_register(NRF_REG_CONFIG, NRF_PWR_UP(0));
+  // Drop CE and power down
+  gpio_low(NRF_CE);
+  //nrf_write_register(NRF_REG_CONFIG, NRF_PWR_UP(0));
 }
 
 uint8_t nrf_read_register(uint8_t reg)
