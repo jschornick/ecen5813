@@ -181,6 +181,9 @@ void log_send_binary(Log_t *log)
 /* init the logging system? */
 void logging_init()
 {
+  #if defined(LOG_OUT_BINARY)
+  print_str("Binlog_Start");
+  #endif
   log_epoch = get_time();
   if(lq_init(&system_log, SYSTEM_LOG_SIZE) == LQ_OK)
   {

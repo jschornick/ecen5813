@@ -185,7 +185,7 @@ void profile_memory() {
   #ifdef DMA_AVAILABLE
   print_result("memset_dma  ", results[func++], num_sizes);
   print_result("memset_dma8 ", results[func++], num_sizes);
-  #endif
+#endif
   print_str("|------------------------------------------|\n");
   print_result("memmove     ", results[func++], num_sizes);
   print_result("my_memmove  ", results[func++], num_sizes);
@@ -204,7 +204,7 @@ uint8_t chars[MAX_CHARS];
 void project3(void)
 {
   platform_init();
-  logging_demo();
+  //logging_demo();
 
   #ifdef PROFILER
   profile_calibrate();
