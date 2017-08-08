@@ -134,7 +134,7 @@ void profile_memory() {
 
   uint8_t num_sizes = 4;
   uint8_t num_funcs = 8;
-  size_t test_sizes[] = {10,50,1000,5000};
+  size_t test_sizes[] = {10,100,1000,5000};
   uint32_t results[num_funcs][num_sizes];
   uint8_t func;
 
@@ -176,7 +176,7 @@ void profile_memory() {
   print_str("+------------------------------------------+\n");
   print_str("| -+-        Profiling Results         -+- |\n");
   print_str("|------------------------------------------|\n");
-  print_str("|              |   10 |   50 | 1000 | 5000 |\n");
+  print_str("|              |   10 |  100 | 1000 | 5000 |\n");
   print_str("|------------------------------------------|\n");
 
   func = 0;
@@ -208,6 +208,7 @@ void project3(void)
 
   #ifdef PROFILER
   profile_calibrate();
+  profile_memory();
   profile_memory();
   profile_memory();
   profile_memory();
