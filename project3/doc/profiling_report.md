@@ -39,6 +39,8 @@ standard library versions.
 
 ## Results
 
+### FRDM-KL25Z
+
 This chart shows the average time to transfer a byte on the KL25Z. The effect of
 function call overhead is very clear in this chart, as the small transfers
 (blue) all have a terrible average performance. Similarly you can see the effect
@@ -52,6 +54,18 @@ achieve a transfer rate over 80 MB/s for large transfers.
 
 <img src="kl25z_transfer_rate.png">
 
+### BeagleBone Black
+
+Though not shown on the graph, the BBB performance is such that even the
+unoptimized versions of the custom functions report zero or near-zero execution
+time, so it is not possible to analayze the overhead. 
+
+For larger transfers (5000 bytes), the C library version of the BBB functions
+can set/transfer at a rate of 1666 MB/s, taking only 3 us for the 5 KB test. The custom `my_memset` also reaches this performance when optimization are enabled. The unoptimized version are 15x (`memmove`) to 40x (`memset`) slower than their optimized versions.
+
+We also see that the BBB has much more variance than the KL25Z, and sometimes shows unexpectedly high times for even small transfers. This is likely due to the non-deterministic caching and multi-tasking nature of the Linux OS.
+
+
 ## Screenshots
 
 Screenshots of profiling on the KL25Z. Left is unoptimized (`-O0`) right is
@@ -61,7 +75,7 @@ optimized (`-O3`).
 <img src="kl25z_profiling_O3.png">
 
 Screenshots of profiling on the BBB. Left is unoptimized (`-O0`) right is
-optimized (`-O3`).
+optimized (`-O3`). 
 
 <img src="bbb_profiling_O0.png">
 <img src="bbb_profiling_O3.png">
